@@ -1,0 +1,8 @@
+numpy
+pandas
+xarray
+netcdf4
+scikit-learn
+joblib
+tensorflow
+rasterio

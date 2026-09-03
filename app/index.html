@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assam Flood & Weather AI Sentinel | Real-Time Neural Forecasting</title>
+    
+    <!-- Modern Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet GIS Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-mono-num { font-family: 'JetBrains Mono', monospace; }
+        
+        .fade-in { animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Custom pulsing marker ring */
+        @keyframes pulseRing {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .pulse-active { animation: pulseRing 2s infinite; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        #floodMap { z-index: 10; }
+        .leaflet-pane { z-index: 10; }
+        .leaflet-top, .leaflet-bottom { z-index: 10; }
+        .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1); padding: 4px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+    <!-- TOP NAVIGATION HEADER -->
+    <header class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-xl border-b border-indigo-500/20 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                
+                <!-- Brand Title -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                        <i class="fa-solid fa-satellite-dish text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-indigo-200 bg-clip-text text-transparent">EdgeAI Sentinel</span>
+                            <span class="bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> LIVE
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-indigo-200/70 font-medium">Brahmaputra & Barak Basins • Dual Neural Monitoring</p>
+                    </div>
+                </div>
+
+                <!-- Right Utility Bar -->
+                <div class="flex items-center space-x-3">
+                    <button id="refreshBtn" class="bg-white/10 hover:bg-white/15 text-slate-200 hover:text-white text-xs font-semibold px-3.5 py-1.5 rounded-lg border border-white/10 transition-all flex items-center gap-2 shadow-sm backdrop-blur-sm active:scale-95">
+                        <i class="fa-solid fa-rotate text-cyan-400 text-xs"></i> 
+                        <span class="hidden sm:inline">Sync Cloud</span>
+                    </button>
+                    <div class="bg-slate-800/80 border border-slate-700/60 px-3 py-1 rounded-lg text-right hidden sm:block">
+                        <p class="text-[10px] uppercase font-bold tracking-wider text-slate-400">System Time</p>
+                        <p id="liveClock" class="text-xs font-mono-num font-semibold text-cyan-300">--:--:--</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Tab Navigation Strip -->
+            <div class="flex space-x-8 -mb-px pt-1">
+                <button id="tab-flood" class="cursor-pointer pb-3 border-b-2 border-cyan-400 text-white font-bold text-sm transition-all duration-200 flex items-center gap-2">
+                    <i class="fa-solid fa-water text-cyan-400"></i>
+                    <span>Flood Risk Radar</span>
+                    <span id="badgeFloodCount" class="bg-red-500/20 text-red-300 border border-red-500/40 text-[11px] font-mono-num px-1.5 py-0.2 rounded-full font-bold">16</span>
+                </button>
+                <button id="tab-weather" class="cursor-pointer pb-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-semibold text-sm transition-all duration-200 flex items-center gap-2">
+                    <i class="fa-solid fa-cloud-sun-rain text-indigo-300"></i>
+                    <span>Weather Forecaster</span>
+                    <span id="badgeWeatherCount" class="bg-blue-500/20 text-blue-300 border border-blue-500/40 text-[11px] font-mono-num px-1.5 py-0.2 rounded-full font-bold">13</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full space-y-6">
+
+        <!-- METRIC KPI SUMMARY ROW -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div class="absolute -right-3 -bottom-3 text-slate-100 group-hover:text-indigo-50 text-6xl transition-colors pointer-events-none">
+                    <i class="fa-solid fa-satellite"></i>
+                </div>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Monitored Basins</p>
+                <div class="flex items-baseline space-x-2">
+                    <span id="kpiTotalZones" class="text-2xl lg:text-3xl font-black text-slate-800 font-mono-num">16</span>
+                    <span class="text-xs font-semibold text-slate-500">Assam Hotspots</span>
+                </div>
+                <p class="text-[11px] text-indigo-600 mt-2 font-medium flex items-center gap-1">
+                    <i class="fa-solid fa-check-double text-[10px]"></i> 100% Neural Coverage
+                </p>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div class="absolute -right-3 -bottom-3 text-slate-100 group-hover:text-red-50 text-6xl transition-colors pointer-events-none">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Active Flood Alert</p>
+                <div class="flex items-baseline space-x-2">
+                    <span id="kpiHighRiskCount" class="text-2xl lg:text-3xl font-black text-red-600 font-mono-num">16</span>
+                    <span class="text-xs font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded">High Risk</span>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-2 font-medium">Threshold: ≥ 45.00%</p>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div class="absolute -right-3 -bottom-3 text-slate-100 group-hover:text-cyan-50 text-6xl transition-colors pointer-events-none">
+                    <i class="fa-solid fa-gauge-high"></i>
+                </div>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Peak AI Risk Index</p>
+                <div class="flex items-baseline space-x-2">
+                    <span id="kpiPeakRisk" class="text-2xl lg:text-3xl font-black text-red-600 font-mono-num">53.37%</span>
+                    <span class="text-[11px] font-mono-num text-slate-400">score: 0.534</span>
+                </div>
+                <p id="kpiPeakZone" class="text-[11px] text-slate-600 mt-2 font-semibold truncate">Hailakandi (Katachak)</p>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div class="absolute -right-3 -bottom-3 text-slate-100 group-hover:text-blue-50 text-6xl transition-colors pointer-events-none">
+                    <i class="fa-solid fa-cloud-showers-heavy"></i>
+                </div>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Max 5-Day Rainfall</p>
+                <div class="flex items-baseline space-x-2">
+                    <span id="kpiMaxRain" class="text-2xl lg:text-3xl font-black text-blue-600 font-mono-num">142.70</span>
+                    <span class="text-xs font-semibold text-slate-500">mm</span>
+                </div>
+                <p id="kpiMaxRainZone" class="text-[11px] text-blue-700 mt-2 font-semibold truncate">Silchar (Barak Valley)</p>
+            </div>
+
+        </section>
+
+        <!-- REGION SELECTOR BAR -->
+        <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex-grow">
+                <label for="locationSelect" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+                    Select Target Monitoring Station / Zone
+                </label>
+                <div class="relative">
+                    <select id="locationSelect" class="w-full pl-10 pr-10 py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-300 rounded-xl font-semibold text-slate-800 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all cursor-pointer">
+                        <option value="" disabled selected>🔄 Connecting to real-time Firestore database...</option>
+                    </select>
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3 self-end md:self-auto">
+                <button id="viewAllFloodsBtn" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-sm flex items-center gap-2 active:scale-95">
+                    <i class="fa-solid fa-map-location-dot text-red-500"></i>
+                    <span>Map All 16 Zones</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- TAB PAGE 1: FLOOD RISK RADAR -->
+        <div id="page-flood" class="fade-in space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+                
+                <!-- Section Header -->
+                <div class="px-6 py-4 bg-gradient-to-r from-slate-50 via-white to-slate-50 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <h2 class="text-lg font-extrabold text-slate-800 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                            ConvLSTM2D-UNet Inundation Telemetry
+                        </h2>
+                        <p class="text-xs text-slate-500">Spatio-temporal inference over 5-day hydrology, elevation & river proximity</p>
+                    </div>
+                    <span class="bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full border border-indigo-100 self-start sm:self-auto">
+                        Spatial Head: 32×32 Patch
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
+                    
+                    <!-- Left: Telemetry Data Card (5 cols) -->
+                    <div class="lg:col-span-5 p-6 border-b lg:border-b-0 lg:border-r border-slate-200 flex flex-col justify-between">
+                        <div id="floodContent" class="space-y-5">
+                            <div class="text-center py-16">
+                                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-400">
+                                    <i class="fa-solid fa-radar text-2xl"></i>
+                                </div>
+                                <h4 class="text-base font-bold text-slate-700">Awaiting Target Selection</h4>
+                                <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">Choose an Assam floodplain above or click "Map All 16 Zones" to inspect hydrological risk telemetry.</p>
+                            </div>
+                        </div>
+
+                        <!-- Footer Model Note -->
+                        <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+                            <span>Architecture: ConvLSTM2D + UNet</span>
+                            <span class="font-mono-num">Recall: 99.00%</span>
+                        </div>
+                    </div>
+
+                    <!-- Right: GIS Map Viewer (7 cols) -->
+                    <div class="lg:col-span-7 h-[420px] lg:h-[480px] bg-slate-100 relative">
+                        <div id="floodMap" class="w-full h-full"></div>
+                        <div id="mapOverlay" class="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] flex flex-col items-center justify-center z-20 transition-opacity">
+                            <div class="bg-white/95 p-5 rounded-2xl shadow-xl text-center max-w-xs mx-4 border border-white">
+                                <i class="fa-solid fa-map-location-dot text-3xl text-indigo-600 mb-2"></i>
+                                <h4 class="text-sm font-bold text-slate-800">Statewide Geospatial View</h4>
+                                <p class="text-xs text-slate-500 mt-1">Select a location from the dropdown above or click the button below to display radar circles.</p>
+                                <button onclick="document.getElementById('viewAllFloodsBtn').click()" class="mt-3 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm">
+                                    Plot All Hotspots
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB PAGE 2: WEATHER FORECASTER -->
+        <div id="page-weather" class="fade-in hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
+                
+                <div class="border-b border-slate-200 pb-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <h2 class="text-lg font-extrabold text-slate-800 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                            1-Hour Ahead Meteorological Prediction Head
+                        </h2>
+                        <p class="text-xs text-slate-500">Sequence-to-Sequence Recurrent Neural Network (LSTM) trained on ECMWF ERA5 Reanalysis</p>
+                    </div>
+                    <span class="bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1 rounded-full border border-blue-100 self-start sm:self-auto font-mono-num">
+                        R² = 0.9352 | MAE = 0.0975
+                    </span>
+                </div>
+
+                <div id="weatherContent" class="min-h-[220px] flex flex-col justify-center">
+                    <div class="text-center py-12">
+                        <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-3 text-blue-400">
+                            <i class="fa-solid fa-cloud-sun text-2xl"></i>
+                        </div>
+                        <h4 class="text-base font-bold text-slate-700">Select an Assam Weather Station</h4>
+                        <p class="text-xs text-slate-400 mt-1">Choose any verified district above to view 1-hour ahead predicted temperature, rainfall, and wind speed.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 text-slate-500 text-xs py-4 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2 text-[11px]">
+            <p>© 2026 Assam Sentinel Deep Learning Project • Dual-Model EdgeAI Operational Architecture</p>
+            <div class="flex items-center space-x-4">
+                <span>Validation Accuracy: <b class="text-slate-800 font-mono-num">97.00%</b></span>
+                <span>•</span>
+                <span>F1-Score: <b class="text-slate-800 font-mono-num">0.970</b></span>
+                <span>•</span>
+                <span>Flood Recall: <b class="text-emerald-600 font-mono-num">99.00%</b></span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- FIREBASE COMPATIBILITY SCRIPTS -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Exact active Firebase project credentials
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJ0mq5yWOeav-YeKPiJoiCT-yISRJLAdc",
+            authDomain: "flood-weather-app.firebaseapp.com",
+            projectId: "flood-weather-app",
+            storageBucket: "flood-weather-app.firebasestorage.app",
+            messagingSenderId: "712726701145",
+            appId: "1:712726701145:web:30a0fbeca15313bfc5fd48",
+            measurementId: "G-86WDPNDD6Z"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // UI DOM Elements
+        const selectBox = document.getElementById('locationSelect');
+        const weatherContent = document.getElementById('weatherContent');
+        const floodContent = document.getElementById('floodContent');
+        const tabFlood = document.getElementById('tab-flood');
+        const tabWeather = document.getElementById('tab-weather');
+        const pageFlood = document.getElementById('page-flood');
+        const pageWeather = document.getElementById('page-weather');
+        const mapOverlay = document.getElementById('mapOverlay');
+        const viewAllFloodsBtn = document.getElementById('viewAllFloodsBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const liveClock = document.getElementById('liveClock');
+
+        // KPI elements
+        const kpiTotalZones = document.getElementById('kpiTotalZones');
+        const kpiHighRiskCount = document.getElementById('kpiHighRiskCount');
+        const kpiPeakRisk = document.getElementById('kpiPeakRisk');
+        const kpiPeakZone = document.getElementById('kpiPeakZone');
+        const kpiMaxRain = document.getElementById('kpiMaxRain');
+        const kpiMaxRainZone = document.getElementById('kpiMaxRainZone');
+        const badgeFloodCount = document.getElementById('badgeFloodCount');
+        const badgeWeatherCount = document.getElementById('badgeWeatherCount');
+
+        // State Variables
+        let currentTab = 'flood'; 
+        let floodLocations = [];
+        let weatherLocations = [];
+        let predictionsCache = [];
+        let weatherCache = [];
+        
+        // --- MAP INITIALIZATION ---
+        let map = L.map('floodMap', { zoomControl: true }).setView([26.2006, 92.9376], 7);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        let dangerLayerGroup = L.featureGroup().addTo(map);
+
+        // Update live local clock
+        function updateClock() {
+            const now = new Date();
+            liveClock.textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString() + ' (IST)';
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ==========================================
+        // 1. DATA LOAD & KPI CALCULATION
+        // ==========================================
+        async function loadLocationsFromFirebase() {
+            try {
+                const floodSet = new Set();
+                const weatherSet = new Set();
+                predictionsCache = [];
+                weatherCache = [];
+
+                // Fetch Weather Forecasts
+                const weatherSnap = await db.collection("weather_forecasts").get();
+                weatherSnap.forEach(doc => {
+                    weatherSet.add(doc.id);
+                    weatherCache.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Fetch Flood Predictions
+                const floodSnap = await db.collection("predictions").get();
+                let highRiskCount = 0;
+                let maxRiskVal = 0;
+                let maxRiskPlace = "--";
+                let maxRainVal = 0;
+                let maxRainPlace = "--";
+
+                floodSnap.forEach(doc => {
+                    const data = doc.data();
+                    predictionsCache.push(data);
+                    if (data.place_name && data.place_name !== "Unknown Location") {
+                        floodSet.add(data.place_name);
+                    }
+
+                    const prob = Number(data.flood_probability || 0);
+                    if (prob >= 0.45) highRiskCount++;
+                    if (prob > maxRiskVal) {
+                        maxRiskVal = prob;
+                        maxRiskPlace = data.place_name || doc.id;
+                    }
+
+                    const rain = Number(data.rainfall_5d_mm || 0);
+                    if (rain > maxRainVal) {
+                        maxRainVal = rain;
+                        maxRainPlace = data.place_name || doc.id;
+                    }
+                });
+
+                floodLocations = Array.from(floodSet).sort();
+                weatherLocations = Array.from(weatherSet).sort();
+
+                // Update KPI Cards with 2-Decimal Precision
+                badgeFloodCount.textContent = floodLocations.length;
+                badgeWeatherCount.textContent = weatherLocations.length;
+                kpiTotalZones.textContent = floodLocations.length;
+                kpiHighRiskCount.textContent = highRiskCount;
+                
+                kpiPeakRisk.textContent = (maxRiskVal * 100).toFixed(2) + '%';
+                kpiPeakZone.textContent = maxRiskPlace;
+
+                kpiMaxRain.textContent = maxRainVal.toFixed(2);
+                kpiMaxRainZone.textContent = maxRainPlace;
+                
+                populateDropdown();
+            } catch (error) {
+                console.error("Error loading locations:", error);
+                selectBox.innerHTML = `<option value="" disabled selected>❌ Connection Error: ${error.message || error}</option>`;
+            }
+        }
+
+        function populateDropdown() {
+            const targetList = currentTab === 'flood' ? floodLocations : weatherLocations;
+            selectBox.innerHTML = `<option value="" disabled selected>-- Select from ${targetList.length} ${currentTab === 'flood' ? 'Flood Zones' : 'Weather Stations'} --</option>`;
+            targetList.forEach(loc => {
+                const option = document.createElement('option');
+                option.value = loc;
+                option.textContent = loc;
+                selectBox.appendChild(option);
+            });
+        }
+
+        // ==========================================
+        // 2. TAB SWITCHING
+        // ==========================================
+        function handleTabSwitch(target) {
+            currentTab = target;
+
+            tabFlood.className = "cursor-pointer pb-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-semibold text-sm transition-all duration-200 flex items-center gap-2";
+            tabWeather.className = "cursor-pointer pb-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-semibold text-sm transition-all duration-200 flex items-center gap-2";
+            pageFlood.classList.add('hidden');
+            pageWeather.classList.add('hidden');
+
+            mapOverlay.style.display = 'flex';
+            dangerLayerGroup.clearLayers();
+            map.setView([26.2006, 92.9376], 7);
+
+            if (currentTab === 'flood') {
+                tabFlood.className = "cursor-pointer pb-3 border-b-2 border-cyan-400 text-white font-bold text-sm transition-all duration-200 flex items-center gap-2";
+                pageFlood.classList.remove('hidden');
+                setTimeout(() => map.invalidateSize(), 200);
+            } else {
+                tabWeather.className = "cursor-pointer pb-3 border-b-2 border-cyan-400 text-white font-bold text-sm transition-all duration-200 flex items-center gap-2";
+                pageWeather.classList.remove('hidden');
+            }
+
+            populateDropdown();
+        }
+
+        tabFlood.addEventListener('click', () => handleTabSwitch('flood'));
+        tabWeather.addEventListener('click', () => handleTabSwitch('weather'));
+
+        // ==========================================
+        // 3. GLOBAL VIEW ALL FLOODS
+        // ==========================================
+        viewAllFloodsBtn.addEventListener('click', async () => {
+            selectBox.value = "";
+            floodContent.innerHTML = `<p class="text-indigo-600 animate-pulse text-center py-12"><i class="fa-solid fa-satellite-dish fa-spin text-3xl mb-3"></i><br>Mapping all state-wide hydrological zones...</p>`;
+            mapOverlay.style.display = 'none'; 
+
+            try {
+                const floodSnapshot = await db.collection("predictions").get();
+                dangerLayerGroup.clearLayers();
+                
+                let floodCount = 0;
+                let highRiskCount = 0;
+
+                floodSnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.latitude && data.longitude) {
+                        floodCount++;
+                        const prob = Number(data.flood_probability || 0);
+                        const riskPercent = (prob * 100).toFixed(2);
+                        const probScore = prob.toFixed(3);
+                        if (prob >= 0.45) highRiskCount++;
+
+                        const mapCircleColor = prob >= 0.50 ? '#ef4444' : (prob >= 0.40 ? '#f97316' : '#eab308');
+
+                        const circle = L.circle([data.latitude, data.longitude], {
+                            color: mapCircleColor,
+                            fillColor: mapCircleColor,
+                            fillOpacity: 0.55,
+                            weight: 2,
+                            radius: 4500 
+                        });
+                        
+                        circle.bindPopup(`
+                            <div class="p-1">
+                                <div class="flex items-center justify-between border-b pb-1 mb-2 gap-2">
+                                    <b class="text-sm font-bold text-slate-900">${data.place_name || "Zone"}</b>
+                                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${prob >= 0.45 ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'}">${data.status}</span>
+                                </div>
+                                <div class="space-y-1 text-xs text-slate-600 font-mono-num">
+                                    <div>AI Risk Score: <b class="text-slate-900">${riskPercent}%</b> <span class="text-[10px] text-slate-400">(${probScore})</span></div>
+                                    <div>5-Day Rainfall: <b class="text-blue-600">${Number(data.rainfall_5d_mm || 0).toFixed(2)} mm</b></div>
+                                    <div>Elevation: <b>${Number(data.elevation_m || 0).toFixed(2)} m</b></div>
+                                    <div>River Proximity: <b>${Number(data.river_dist_m || 0).toFixed(2)} m</b></div>
+                                </div>
+                            </div>
+                        `);
+                        dangerLayerGroup.addLayer(circle);
+                    }
+                });
+
+                if (floodCount > 0) {
+                    map.fitBounds(dangerLayerGroup.getBounds(), { padding: [30, 30] });
+
+                    floodContent.innerHTML = `
+                        <div class="bg-gradient-to-br from-red-50/80 via-white to-slate-50 p-6 rounded-2xl border border-red-200/80 shadow-sm space-y-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-xl shadow-inner">
+                                    <i class="fa-solid fa-tower-broadcast animate-pulse"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-base font-extrabold text-red-700">Statewide Risk Overview Active</h4>
+                                    <p class="text-xs text-slate-500">Monitoring <span class="font-bold text-slate-800">${floodCount}</span> verified hydrological basins across Assam</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 text-xs pt-2 border-t border-red-100 font-mono-num">
+                                <div class="bg-white p-3 rounded-xl border border-red-100">
+                                    <p class="text-[10px] uppercase font-bold text-slate-400">High Risk Zones</p>
+                                    <p class="text-xl font-black text-red-600 mt-0.5">${highRiskCount} / ${floodCount}</p>
+                                </div>
+                                <div class="bg-white p-3 rounded-xl border border-red-100">
+                                    <p class="text-[10px] uppercase font-bold text-slate-400">Confidence Model</p>
+                                    <p class="text-xl font-black text-indigo-600 mt-0.5">97.00%</p>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-slate-500 italic bg-amber-50/60 p-2.5 rounded-xl border border-amber-200/60 flex items-center gap-2">
+                                <i class="fa-solid fa-circle-info text-amber-500"></i>
+                                Click any circle on the map to inspect localized rainfall and river telemetry.
+                            </p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error("Global Map Error:", error);
+                floodContent.innerHTML = `<p class="text-red-500 text-center py-8">Failed to fetch global map data.</p>`;
+            }
+        });
+
+        // ==========================================
+        // 4. FETCH & RENDER SINGLE LOCATION
+        // ==========================================
+        selectBox.addEventListener('change', async (e) => {
+            const place = e.target.value;
+            const searchTarget = place.toLowerCase(); 
+
+            if (currentTab === 'flood') {
+                floodContent.innerHTML = `<div class="text-center py-12"><i class="fa-solid fa-satellite fa-spin text-3xl text-indigo-600 mb-3"></i><p class="text-xs font-semibold text-slate-600">Running ConvLSTM2D-UNet Inference...</p></div>`;
+                mapOverlay.style.display = 'none';
+
+                try {
+                    const floodSnapshot = await db.collection("predictions").get();
+                    let foundData = null;
+
+                    floodSnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        const dbPlaceName = (data.place_name || "").toLowerCase();
+                        if (dbPlaceName.includes(searchTarget) || searchTarget.includes(dbPlaceName)) {
+                            foundData = data;
+                        }
+                    });
+
+                    if (foundData) {
+                        const prob = Number(foundData.flood_probability || 0);
+                        const riskPercent = (prob * 100).toFixed(2);
+                        const probScore = prob.toFixed(3);
+                        const rain5d = Number(foundData.rainfall_5d_mm || 0).toFixed(2);
+                        const elev = Number(foundData.elevation_m || 0).toFixed(2);
+                        const riverDist = Number(foundData.river_dist_m || 0).toFixed(2);
+
+                        const alertColor = prob >= 0.50 ? 'text-red-600' : (prob >= 0.40 ? 'text-orange-500' : 'text-yellow-600');
+                        const barColor = prob >= 0.50 ? 'bg-red-500' : (prob >= 0.40 ? 'bg-orange-500' : 'bg-yellow-500');
+                        const badgeBg = prob >= 0.50 ? 'bg-red-50 text-red-700 border-red-200' : 'bg-orange-50 text-orange-700 border-orange-200';
+                        const mapCircleColor = prob >= 0.50 ? '#ef4444' : '#f97316'; 
+
+                        floodContent.innerHTML = `
+                            <div class="space-y-4">
+                                <!-- Location & Alert Header -->
+                                <div class="bg-gradient-to-r from-slate-50 to-white p-4 rounded-xl border border-slate-200 flex items-center justify-between">
+                                    <div>
+                                        <h3 class="text-base font-extrabold text-slate-800">${foundData.place_name}</h3>
+                                        <p class="text-xs text-slate-400 font-mono-num">${Number(foundData.latitude).toFixed(4)}° N, ${Number(foundData.longitude).toFixed(4)}° E</p>
+                                    </div>
+                                    <span class="text-xs font-bold px-2.5 py-1 rounded-full border ${badgeBg} shadow-sm flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full ${barColor} animate-pulse"></span>
+                                        ${foundData.status}
+                                    </span>
+                                </div>
+
+                                <!-- Risk Score Gauge -->
+                                <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm space-y-2">
+                                    <div class="flex justify-between items-baseline">
+                                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">ConvLSTM2D Confidence Score</span>
+                                        <div class="text-right">
+                                            <span class="text-3xl font-black ${alertColor} font-mono-num">${riskPercent}%</span>
+                                            <span class="text-xs text-slate-400 font-mono-num ml-1">(${probScore})</span>
+                                        </div>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden p-0.5 shadow-inner">
+                                        <div class="${barColor} h-2 rounded-full transition-all duration-1000 shadow-sm" style="width: ${Math.min(100, Math.max(5, prob * 100))}%"></div>
+                                    </div>
+                                    <p class="text-[11px] text-slate-400 text-right">Production Threshold: ≥ 45.00%</p>
+                                </div>
+
+                                <!-- 4-Cell Hydrological Metric Grid -->
+                                <div class="grid grid-cols-2 gap-3 text-xs font-mono-num">
+                                    <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/80">
+                                        <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider mb-1 flex items-center gap-1">
+                                            <i class="fa-solid fa-cloud-showers-heavy text-blue-500"></i> 5-Day Rainfall
+                                        </div>
+                                        <p class="text-base font-bold text-slate-800">${rain5d} <span class="text-xs font-normal text-slate-500">mm</span></p>
+                                    </div>
+
+                                    <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/80">
+                                        <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider mb-1 flex items-center gap-1">
+                                            <i class="fa-solid fa-mountain text-amber-500"></i> DEM Elevation
+                                        </div>
+                                        <p class="text-base font-bold text-slate-800">${elev} <span class="text-xs font-normal text-slate-500">m</span></p>
+                                    </div>
+
+                                    <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/80">
+                                        <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider mb-1 flex items-center gap-1">
+                                            <i class="fa-solid fa-water text-cyan-500"></i> River Proximity
+                                        </div>
+                                        <p class="text-base font-bold text-slate-800">${riverDist} <span class="text-xs font-normal text-slate-500">m</span></p>
+                                    </div>
+
+                                    <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/80">
+                                        <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider mb-1 flex items-center gap-1">
+                                            <i class="fa-solid fa-clock text-indigo-500"></i> Last Model Scan
+                                        </div>
+                                        <p class="text-[11px] font-bold text-slate-700 truncate">${foundData.timestamp || 'Real-Time'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+                        dangerLayerGroup.clearLayers();
+
+                        const circle = L.circle([foundData.latitude, foundData.longitude], {
+                            color: mapCircleColor,
+                            fillColor: mapCircleColor,
+                            fillOpacity: 0.55,
+                            weight: 3,
+                            radius: 4500 
+                        }).addTo(dangerLayerGroup);
+
+                        circle.bindPopup(`
+                            <div class="p-1">
+                                <b class="text-sm font-bold text-slate-900">${foundData.place_name}</b><br>
+                                <span class="text-xs font-bold text-red-600">Risk: ${riskPercent}%</span><br>
+                                <span class="text-xs text-slate-600">5-Day Rain: ${rain5d} mm</span>
+                            </div>
+                        `).openPopup();
+
+                        map.flyTo([foundData.latitude, foundData.longitude], 11, { duration: 1.2 });
+
+                    }
+                } catch (error) {
+                    console.error(error);
+                    floodContent.innerHTML = `<p class="text-red-500 text-center py-8">Failed to connect to AI backend.</p>`;
+                }
+            } 
+            else if (currentTab === 'weather') {
+                weatherContent.innerHTML = `<div class="text-center py-12"><i class="fa-solid fa-spinner fa-spin text-3xl text-indigo-600 mb-3"></i><p class="text-xs font-semibold text-slate-600">Executing LSTM Recurrent Model...</p></div>`;
+                try {
+                    const weatherSnap = await db.collection("weather_forecasts").doc(place).get();
+                    if (weatherSnap.exists) {
+                        const data = weatherSnap.data();
+                        const forecast = data.next_hour_forecast;
+
+                        const temp = Number(forecast.temp_c || 0).toFixed(2);
+                        const rain = Number(forecast.rain_mm || 0).toFixed(2);
+                        const wind = Number(forecast.wind_ms || 0).toFixed(2);
+                        
+                        weatherContent.innerHTML = `
+                            <div class="space-y-6">
+                                
+                                <div class="bg-gradient-to-r from-slate-50 to-white p-4 rounded-xl border border-slate-200 flex items-center justify-between">
+                                    <div>
+                                        <h3 class="text-base font-extrabold text-slate-800">${data.place_name || place} Station</h3>
+                                        <p class="text-xs text-slate-400 font-mono-num">${Number(data.latitude).toFixed(4)}° N, ${Number(data.longitude).toFixed(4)}° E</p>
+                                    </div>
+                                    <span class="text-xs font-bold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 shadow-sm">
+                                        Horizon: +1 Hour
+                                    </span>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 font-mono-num">
+                                    
+                                    <!-- Temperature Card -->
+                                    <div class="bg-gradient-to-br from-amber-50/50 via-white to-orange-50/30 p-5 rounded-2xl border border-amber-200/80 shadow-sm relative overflow-hidden">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Temperature</span>
+                                            <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center">
+                                                <i class="fa-solid fa-temperature-three-quarters"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-baseline space-x-1">
+                                            <span class="text-3xl lg:text-4xl font-black text-slate-800">${temp}</span>
+                                            <span class="text-base font-bold text-amber-600">°C</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-400 mt-2 font-sans">Predicted Surface Temp</p>
+                                    </div>
+
+                                    <!-- Rainfall Card -->
+                                    <div class="bg-gradient-to-br from-blue-50/50 via-white to-cyan-50/30 p-5 rounded-2xl border border-blue-200/80 shadow-sm relative overflow-hidden">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <span class="text-xs font-bold uppercase tracking-wider text-blue-700">Precipitation</span>
+                                            <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+                                                <i class="fa-solid fa-cloud-showers-heavy"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-baseline space-x-1">
+                                            <span class="text-3xl lg:text-4xl font-black text-slate-800">${rain}</span>
+                                            <span class="text-base font-bold text-blue-600">mm</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-400 mt-2 font-sans">1-Hour Forecast Accumulation</p>
+                                    </div>
+
+                                    <!-- Wind Speed Card -->
+                                    <div class="bg-gradient-to-br from-teal-50/50 via-white to-emerald-50/30 p-5 rounded-2xl border border-teal-200/80 shadow-sm relative overflow-hidden">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <span class="text-xs font-bold uppercase tracking-wider text-teal-700">Wind Velocity</span>
+                                            <div class="w-8 h-8 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center">
+                                                <i class="fa-solid fa-wind"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-baseline space-x-1">
+                                            <span class="text-3xl lg:text-4xl font-black text-slate-800">${wind}</span>
+                                            <span class="text-base font-bold text-teal-600">m/s</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-400 mt-2 font-sans">10m Surface Wind Speed</p>
+                                    </div>
+
+                                </div>
+
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-right text-xs text-slate-400 flex items-center justify-between">
+                                    <span class="text-[11px] text-slate-500">Inference Engine: <b>LSTM Sequence-to-Sequence (24h Window)</b></span>
+                                    <span class="font-mono-num">Model Synced: <b>${data.updated_at || 'Live'}</b></span>
+                                </div>
+
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+        });
+
+        // Refresh button click handler
+        refreshBtn.addEventListener('click', () => {
+            refreshBtn.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-cyan-400"></i> Syncing...`;
+            loadLocationsFromFirebase().then(() => {
+                setTimeout(() => {
+                    refreshBtn.innerHTML = `<i class="fa-solid fa-rotate text-cyan-400"></i> <span class="hidden sm:inline">Sync Cloud</span>`;
+                }, 500);
+            });
+        });
+
+        // Auto-refresh every 3 minutes
+        setInterval(loadLocationsFromFirebase, 180000);
+
+        // Initial Data Load
+        loadLocationsFromFirebase();
+
+    </script>
+</body>
+</html>

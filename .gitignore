@@ -1,0 +1,23 @@
+# Python Virtual Environment
+venv/
+.venv/
+env/
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Firebase & Secret Keys (CRITICAL: Never commit service account private keys)
+*your_service_account.json
+*your_key.json
+*.pem
+service_account.json
+.firebase/
+
+# System and Editor metadata
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
