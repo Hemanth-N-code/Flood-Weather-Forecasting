@@ -1,7 +1,8 @@
 """
-Academic Diagram Generator for IEEE Publication
-================================================
-Generates publication-quality, 300-DPI vector-raster architecture diagrams:
+Academic Diagram Generator for IEEE Publication (Spacious & Clean Layout)
+========================================================================
+Generates publication-quality, 300-DPI vector-raster architecture diagrams
+with spacious layouts, zero text overlapping, and clear typography:
 1. doc/system_architecture.png: End-to-End Multi-Tier EdgeAI Sentinel Framework
 2. doc/convlstm_unet_architecture.png: ConvLSTM2D-UNet Hybrid Neural Architecture
 """
@@ -11,49 +12,74 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-from matplotlib.patches import FancyBboxPatch, ArrowStyle
+from matplotlib.patches import FancyBboxPatch
 
 DOC_DIR = os.path.join(os.path.dirname(__file__), "doc")
 os.makedirs(DOC_DIR, exist_ok=True)
 
-# Common styling configuration
 plt.rcParams['font.sans-serif'] = 'DejaVu Sans'
 plt.rcParams['axes.edgecolor'] = '#cbd5e1'
 plt.rcParams['axes.linewidth'] = 0.8
 
-def draw_box(ax, x, y, w, h, title, subtitle="", box_color="#ffffff", border_color="#64748b", text_color="#1e293b", corner_radius=0.03):
-    box = FancyBboxPatch(
+def draw_card(ax, x, y, w, h, title, body_lines, card_color="#ffffff", border_color="#3b82f6", header_color=None, title_color="#0f172a"):
+    """Draws a spacious, professional UI card with a header and bullet points."""
+    # Outer card
+    card = FancyBboxPatch(
         (x, y), w, h,
-        boxstyle=f"round,pad=0.01,rounding_size={corner_radius}",
-        facecolor=box_color,
+        boxstyle="round,pad=0.015,rounding_size=0.02",
+        facecolor=card_color,
         edgecolor=border_color,
-        linewidth=1.5,
+        linewidth=1.4,
         zorder=2
     )
-    ax.add_patch(box)
+    ax.add_patch(card)
     
-    # Title
+    # Optional header background banner
+    if header_color:
+        header_h = h * 0.28
+        header_patch = FancyBboxPatch(
+            (x, y + h - header_h), w, header_h,
+            boxstyle="round,pad=0.01,rounding_size=0.015",
+            facecolor=header_color,
+            edgecolor=border_color,
+            linewidth=1.0,
+            zorder=3
+        )
+        ax.add_patch(header_patch)
+        title_y = y + h - header_h / 2
+    else:
+        title_y = y + h - 0.035
+
+    # Title text
     ax.text(
-        x + w / 2, y + h * 0.65 if subtitle else y + h * 0.5,
+        x + w / 2, title_y,
         title,
         ha='center', va='center',
-        fontsize=9.5, fontweight='bold',
-        color=text_color, zorder=3
+        fontsize=9.0, fontweight='bold',
+        color=title_color, zorder=4
     )
-    # Subtitle
-    if subtitle:
-        ax.text(
-            x + w / 2, y + h * 0.28,
-            subtitle,
-            ha='center', va='center',
-            fontsize=7.5, fontweight='normal',
-            color="#475569", zorder=3
-        )
+    
+    # Body lines (with generous line spacing and vertical centering)
+    if body_lines:
+        line_count = len(body_lines)
+        available_h = (h * 0.70) if header_color else (h - 0.06)
+        line_spacing = available_h / (line_count + 1)
+        start_y = (y + h * 0.70) if header_color else (y + h - 0.065)
+        
+        for i, line in enumerate(body_lines):
+            curr_y = start_y - (i + 0.6) * line_spacing
+            ax.text(
+                x + 0.012, curr_y,
+                line,
+                ha='left', va='center',
+                fontsize=7.2, color="#334155",
+                zorder=4
+            )
 
-def draw_arrow(ax, x1, y1, x2, y2, color="#475569", width=1.5, label=""):
+def draw_flow_arrow(ax, x1, y1, x2, y2, color="#475569", width=1.5, label=""):
     arrow = patches.FancyArrowPatch(
         (x1, y1), (x2, y2),
-        arrowstyle='-|>,head_length=5,head_width=3',
+        arrowstyle='-|>,head_length=5,head_width=3.5',
         color=color,
         linewidth=width,
         zorder=1
@@ -61,159 +87,340 @@ def draw_arrow(ax, x1, y1, x2, y2, color="#475569", width=1.5, label=""):
     ax.add_patch(arrow)
     if label:
         ax.text(
-            (x1 + x2) / 2, (y1 + y2) / 2 + 0.02,
+            (x1 + x2) / 2, (y1 + y2) / 2 + 0.018,
             label,
             ha='center', va='bottom',
-            fontsize=7, fontweight='bold', color=color, zorder=4
+            fontsize=7.5, fontweight='bold', color=color, zorder=5,
+            bbox=dict(boxstyle='round,pad=0.15', facecolor='#ffffff', edgecolor='#e2e8f0', alpha=0.9)
         )
 
 # =============================================================================
-# 1. GENERATE SYSTEM ARCHITECTURE DIAGRAM
+# 1. GENERATE SPACIOUS SYSTEM ARCHITECTURE DIAGRAM
 # =============================================================================
 def generate_system_architecture():
-    fig, ax = plt.subplots(figsize=(14, 8), dpi=300)
-    ax.set_xlim(-0.02, 1.02)
-    ax.set_ylim(-0.02, 1.02)
+    # Large 20x11 canvas for zero overlap
+    fig, ax = plt.subplots(figsize=(20, 11), dpi=300)
+    ax.set_xlim(-0.01, 1.01)
+    ax.set_ylim(-0.01, 1.01)
     ax.axis('off')
     
-    # Background Canvas
     fig.patch.set_facecolor('#f8fafc')
     ax.set_facecolor('#f8fafc')
     
-    # Title Header
+    # Title Banner
     ax.text(0.5, 0.98, "EdgeAI Sentinel: End-to-End System Architecture", 
-            ha='center', va='top', fontsize=16, fontweight='black', color='#0f172a')
-    ax.text(0.5, 0.94, "Multi-Modal Ingestion • Autonomous Edge Inference • Serverless Cloud Telemetry • Public GIS Radar", 
-            ha='center', va='top', fontsize=9.5, color='#475569')
+            ha='center', va='top', fontsize=18, fontweight='black', color='#0f172a')
+    ax.text(0.5, 0.945, "Coupled Multi-Modal Remote Sensing • Autonomous Edge Inference • Serverless Cloud Telemetry", 
+            ha='center', va='top', fontsize=11, color='#64748b')
 
-    # 5 Major Tiers (Vertical Columns)
+    # 5 Big Columns / Tiers
+    col_w = 0.165
+    gap = 0.035
+    start_x = 0.015
+    
     tiers = [
-        {"x": 0.01, "w": 0.17, "title": "TIER 1: MULTI-MODAL DATA", "color": "#eff6ff", "border": "#3b82f6"},
-        {"x": 0.21, "w": 0.17, "title": "TIER 2: TENSOR FORMULATION", "color": "#f0fdf4", "border": "#22c55e"},
-        {"x": 0.41, "w": 0.20, "title": "TIER 3: EDGE AI INFERENCE", "color": "#faf5ff", "border": "#a855f7"},
-        {"x": 0.64, "w": 0.17, "title": "TIER 4: CLOUD SYNC", "color": "#fff7ed", "border": "#f97316"},
-        {"x": 0.84, "w": 0.15, "title": "TIER 5: GIS DELIVERY", "color": "#fef2f2", "border": "#ef4444"},
+        {"name": "TIER 1: DATA SOURCES", "sub": "Multi-Sensor Observation Lake", "border": "#2563eb", "bg": "#eff6ff"},
+        {"name": "TIER 2: TENSORS", "sub": "Feature Engineering & Transforms", "border": "#16a34a", "bg": "#f0fdf4"},
+        {"name": "TIER 3: EDGE AI INFERENCE", "sub": "Dual-Neural Prediction Engine", "border": "#9333ea", "bg": "#faf5ff"},
+        {"name": "TIER 4: CLOUD SYNC", "sub": "Google Cloud Firestore Buffer", "border": "#ea580c", "bg": "#fff7ed"},
+        {"name": "TIER 5: GIS DELIVERY", "sub": "Real-Time Web Application", "border": "#dc2626", "bg": "#fef2f2"}
     ]
     
-    # Draw Tier Containers
-    for t in tiers:
-        bg_box = FancyBboxPatch((t["x"], 0.05), t["w"], 0.84,
+    for i, t in enumerate(tiers):
+        cx = start_x + i * (col_w + gap)
+        # Background Column Outline
+        col_box = FancyBboxPatch((cx, 0.04), col_w, 0.86,
                                 boxstyle="round,pad=0.01,rounding_size=0.02",
-                                facecolor=t["color"], edgecolor=t["border"], linewidth=1.2, linestyle='--', alpha=0.5)
-        ax.add_patch(bg_box)
-        ax.text(t["x"] + t["w"]/2, 0.86, t["title"], ha='center', va='center', fontsize=8.5, fontweight='bold', color=t["border"])
+                                facecolor=t["bg"], edgecolor=t["border"], linewidth=1.2, linestyle='--', alpha=0.45)
+        ax.add_patch(col_box)
+        
+        # Column Title
+        ax.text(cx + col_w / 2, 0.875, t["name"], ha='center', va='center', fontsize=9.0, fontweight='black', color=t["border"])
+        ax.text(cx + col_w / 2, 0.855, t["sub"], ha='center', va='center', fontsize=7.2, color='#64748b')
 
-    # --- TIER 1: DATA SOURCES ---
-    draw_box(ax, 0.025, 0.73, 0.14, 0.09, "Sentinel-1 SAR", "C-Band VV Water Masks (10m)", "#ffffff", "#3b82f6")
-    draw_box(ax, 0.025, 0.60, 0.14, 0.09, "Sentinel-2 MSI", "Optical NDWI Moisture (10m)", "#ffffff", "#3b82f6")
-    draw_box(ax, 0.025, 0.47, 0.14, 0.09, "NASA GPM IMERG", "5-Day Precipitation History", "#ffffff", "#3b82f6")
-    draw_box(ax, 0.025, 0.34, 0.14, 0.09, "NASA SRTM DEM", "30m Elevation & Slope", "#ffffff", "#3b82f6")
-    draw_box(ax, 0.025, 0.21, 0.14, 0.09, "JRC Surface Water", "Euclidean River Proximity", "#ffffff", "#3b82f6")
-    draw_box(ax, 0.025, 0.08, 0.14, 0.09, "Open-Meteo REST API", "Live 24h Hourly Meteorology", "#ffffff", "#3b82f6")
+    # --- TIER 1 CARDS (x = 0.02) ---
+    x1 = start_x + 0.008
+    w1 = col_w - 0.016
+    draw_card(ax, x1, 0.72, w1, 0.11, "Sentinel-1 SAR Radar", 
+              ["• C-Band VV Polarisation (10m)", "• All-weather cloud penetration", "• Binary ground truth water mask"], 
+              border_color="#3b82f6", header_color="#dbeafe")
 
-    # --- TIER 2: TENSORS ---
-    draw_box(ax, 0.225, 0.50, 0.14, 0.32, "Spatio-Temporal Tensor\nX ∈ ℝ^(N×5×32×32×6)", "Band 0: SAR Flood Mask\nBand 1: Optical NDWI [0,1]\nBand 2: GPM Rain / 50.0\nBand 3: DEM Height / 3000m\nBand 4: Terrain Slope / 45°\nBand 5: River Dist / 5000m", "#ffffff", "#22c55e", corner_radius=0.02)
-    draw_box(ax, 0.225, 0.10, 0.14, 0.32, "Atmospheric Sequence\nW ∈ ℝ^(B×24×8)", "Temp, Dewpoint, MSL Press,\nSurface Press, Rain, Wind,\n+ Diurnal Cyclical Encodings:\nsin(2πh/24) & cos(2πh/24)\nStandardScaler Normalized", "#ffffff", "#22c55e", corner_radius=0.02)
+    draw_card(ax, x1, 0.58, w1, 0.11, "Sentinel-2 MSI Optical", 
+              ["• Multi-Spectral Bands (10m)", "• NDWI = (Green-NIR)/(Green+NIR)", "• Captures surface water moisture"], 
+              border_color="#3b82f6", header_color="#dbeafe")
 
-    # --- TIER 3: EDGE AI INFERENCE ---
-    draw_box(ax, 0.425, 0.50, 0.17, 0.32, "ConvLSTM2D-UNet Model\n(downloaded_model.keras)", "ConvLSTM2D(32, 3x3) -> BN\nConvLSTM2D(16, 3x3) -> BN\nUNet Bottleneck Conv2D(64)\nUpSampling2D -> Concatenate\nConv2D(1, Sigmoid)\nLatency: ~19.1 ms/patch", "#ffffff", "#a855f7", corner_radius=0.02)
-    draw_box(ax, 0.425, 0.10, 0.17, 0.32, "Stacked Weather LSTM\n(weather_lstm_model.h5)", "LSTM(128, Dropout=0.2)\nLSTM(64, Recurrent=0.2)\nDense(32, ReLU) -> Dense(8)\nForecast Horizon: t + 1 hour\nLatency: ~68.3 ms/station", "#ffffff", "#a855f7", corner_radius=0.02)
+    draw_card(ax, x1, 0.44, w1, 0.11, "NASA GPM IMERG Daily", 
+              ["• Satellite Precipitation History", "• 5-Day Cumulative Rainfall (mm)", "• Antecedent catchment moisture"], 
+              border_color="#3b82f6", header_color="#dbeafe")
 
-    # --- TIER 4: CLOUD SYNC ---
-    draw_box(ax, 0.655, 0.52, 0.14, 0.28, "Firestore Collection:\n'predictions'", "16 Regional Documents\n• Latitude / Longitude\n• Inundation Risk Score (%)\n• Mean / Peak Probabilities\n• 5d Rain, DEM, River Dist\n• Synchronized in ~1.98 s", "#ffffff", "#f97316", corner_radius=0.02)
-    draw_box(ax, 0.655, 0.12, 0.14, 0.28, "Firestore Collection:\n'weather_forecasts'", "13 Station Documents\n• 1-Hour Temp (°C)\n• 1-Hour Rain (mm)\n• 1-Hour Wind (m/s)\n• Updated_At Timestamp\n• Synchronized in ~0.35 s", "#ffffff", "#f97316", corner_radius=0.02)
+    draw_card(ax, x1, 0.30, w1, 0.11, "NASA SRTM 30m DEM", 
+              ["• Topographic ground height (m)", "• Derived slope gradient (deg)", "• Prevents mountain false alerts"], 
+              border_color="#3b82f6", header_color="#dbeafe")
 
-    # --- TIER 5: GIS PRESENTATION ---
-    draw_box(ax, 0.855, 0.45, 0.12, 0.35, "Interactive GIS Map\n(Leaflet.js)", "• Dynamic Risk Circles\n  - Red (>=45% High)\n  - Orange (>=35% Mod)\n  - Green (<35% Low)\n• Statewide Auto-Fit\n• Telemetry Popups", "#ffffff", "#ef4444", corner_radius=0.02)
-    draw_box(ax, 0.855, 0.08, 0.12, 0.30, "Public Web Hosting\n(Google CDN)", "URL: flood-weather-app.web.app\n• Global Edge CDN\n• Automated SSL (HTTPS)\n• Client Latency: ~0.41 s\n• Zero Server Maintenance", "#ffffff", "#ef4444", corner_radius=0.02)
+    draw_card(ax, x1, 0.16, w1, 0.11, "JRC Global Surface Water", 
+              ["• Long-term historical water map", "• Euclidean distance to rivers (m)", "• Proximity to Brahmaputra/Barak"], 
+              border_color="#3b82f6", header_color="#dbeafe")
 
-    # Arrows Connecting Stages
-    draw_arrow(ax, 0.165, 0.65, 0.225, 0.65, "#22c55e", 1.8)
-    draw_arrow(ax, 0.165, 0.25, 0.225, 0.25, "#22c55e", 1.8)
-    
-    draw_arrow(ax, 0.365, 0.65, 0.425, 0.65, "#a855f7", 1.8, "Tensors")
-    draw_arrow(ax, 0.365, 0.25, 0.425, 0.25, "#a855f7", 1.8, "Sequences")
+    draw_card(ax, x1, 0.05, w1, 0.09, "Open-Meteo REST API", 
+              ["• Live hourly weather observations", "• 13 Assam meteorological stations"], 
+              border_color="#3b82f6", header_color="#dbeafe")
 
-    draw_arrow(ax, 0.595, 0.65, 0.655, 0.65, "#f97316", 1.8, "Risk Maps")
-    draw_arrow(ax, 0.595, 0.25, 0.655, 0.25, "#f97316", 1.8, "Forecasts")
+    # --- TIER 2 CARDS (x = 0.215) ---
+    x2 = start_x + 1 * (col_w + gap) + 0.008
+    w2 = col_w - 0.016
+    draw_card(ax, x2, 0.48, w2, 0.35, "Flood Tensor Formulation\nX in R^(N x 5 x 32 x 32 x 6)", 
+              ["• N = 16 Assam monitored basins",
+               "• T = 5 consecutive days (t-4 to t)",
+               "• Spatial = 32 x 32 grid patch",
+               "• Channel 0: SAR Flood Mask {0, 1}",
+               "• Channel 1: Optical NDWI in [0, 1]",
+               "• Channel 2: Rain (mm) / 50.0",
+               "• Channel 3: DEM Height / 3000m",
+               "• Channel 4: Slope / 45 degrees",
+               "• Channel 5: River Dist / 5000m"],
+              border_color="#22c55e", header_color="#dcfce7")
 
-    draw_arrow(ax, 0.795, 0.65, 0.855, 0.65, "#ef4444", 1.8)
-    draw_arrow(ax, 0.795, 0.25, 0.855, 0.25, "#ef4444", 1.8)
+    draw_card(ax, x2, 0.08, w2, 0.35, "Weather Matrix Formulation\nW in R^(B x 24 x 8)", 
+              ["• B = Batch size (13 stations)",
+               "• Sequence = Rolling 24 hours",
+               "• 8 Normalized Features:",
+               "  - 2m Temperature (deg C)",
+               "  - 2m Dewpoint (deg C)",
+               "  - Surface & MSL Pressure (hPa)",
+               "  - Rainfall & Wind Speed",
+               "  - Cyclical: sin(2*pi*h / 24)",
+               "  - Cyclical: cos(2*pi*h / 24)",
+               "• StandardScaler Normalization"],
+              border_color="#22c55e", header_color="#dcfce7")
+
+    # --- TIER 3 CARDS (x = 0.415) ---
+    x3 = start_x + 2 * (col_w + gap) + 0.008
+    w3 = col_w - 0.016
+    draw_card(ax, x3, 0.48, w3, 0.35, "ConvLSTM2D-UNet Model\n(downloaded_model.keras)", 
+              ["• Spatio-Temporal Inundation Head",
+               "• ConvLSTM2D(32, 3x3) + BN",
+               "• ConvLSTM2D(16, 3x3) + BN",
+               "• UNet Bottleneck Conv2D(64, 3x3)",
+               "• UpSampling2D + Skip Connection",
+               "• Output: (16, 32, 32, 1) probability",
+               "• Accuracy: 97.0% | Recall: 99.0%",
+               "• Inference Latency: ~19.1 ms/patch",
+               "• Correlation: +0.819 Rain, -0.514 DEM"],
+              border_color="#a855f7", header_color="#f3e8ff")
+
+    draw_card(ax, x3, 0.08, w3, 0.35, "Weather Sequence LSTM\n(weather_lstm_model.h5)", 
+              ["• Recurrent Atmospheric Forecaster",
+               "• Stacked LSTM Architecture:",
+               "  - LSTM Layer 1 (128 units, drop=0.2)",
+               "  - LSTM Layer 2 (64 units, drop=0.2)",
+               "  - Dense Latent (32 units, ReLU)",
+               "  - Dense Head (8 units, Linear)",
+               "• Forecast Horizon: t + 1 hour ahead",
+               "• R2 = 0.9352 | MAE = 0.0975",
+               "• Inference Latency: ~68.3 ms/station"],
+              border_color="#a855f7", header_color="#f3e8ff")
+
+    # --- TIER 4 CARDS (x = 0.615) ---
+    x4 = start_x + 3 * (col_w + gap) + 0.008
+    w4 = col_w - 0.016
+    draw_card(ax, x4, 0.48, w4, 0.35, "Cloud Firestore:\n'predictions' Collection", 
+              ["• 16 Basin Alert Documents:",
+               "  - Place name & Geocoordinates",
+               "  - Peak Flood Probability (%)",
+               "  - Mean Inundation Score",
+               "  - Status: High/Moderate/Low Risk",
+               "  - 5-day Rainfall, DEM, River Dist",
+               "  - Sync Timestamp (IST)",
+               "• Production Thresholds:",
+               "  - High Risk: >= 45.00%",
+               "  - Moderate Risk: >= 35.00%",
+               "• Write Latency: ~1.98 s (Batch)"],
+              border_color="#f97316", header_color="#ffedd5")
+
+    draw_card(ax, x4, 0.08, w4, 0.35, "Cloud Firestore:\n'weather_forecasts' Collection", 
+              ["• 13 Station Telemetry Documents:",
+               "  - Station Name & Coordinates",
+               "  - Predicted 1-Hour Temp (deg C)",
+               "  - Predicted 1-Hour Rain (mm)",
+               "  - Predicted 1-Hour Wind (m/s)",
+               "  - Updated_At Timestamp (IST)",
+               "• Decoupled Egress Architecture",
+               "  (Zero open ports on edge device)",
+               "• Write Latency: ~0.35 s (Batch)"],
+              border_color="#f97316", header_color="#ffedd5")
+
+    # --- TIER 5 CARDS (x = 0.815) ---
+    x5 = start_x + 4 * (col_w + gap) + 0.008
+    w5 = col_w - 0.016
+    draw_card(ax, x5, 0.48, w5, 0.35, "Interactive GIS Radar\n(Leaflet.js)", 
+              ["• Real-Time Hazard Visualization",
+               "• Dynamic Risk Marker Buffers:",
+               "  - Red (High Inundation Risk)",
+               "  - Orange (Moderate Inundation Risk)",
+               "  - Yellow (Low Inundation Risk)",
+               "• Statewide Auto-Fit Bounds",
+               "• 4-Cell Telemetry Popups",
+               "• Auto-polling every 180 seconds"],
+              border_color="#ef4444", header_color="#fee2e2")
+
+    draw_card(ax, x5, 0.08, w5, 0.35, "Global Web Hosting\n(Firebase CDN)", 
+              ["• Public URL:",
+               "  flood-weather-app.web.app",
+               "• Google Edge Infrastructure:",
+               "  - Automated HTTPS / SSL",
+               "  - Single-Page App (SPA) rewrite",
+               "  - Browser Compat SDK",
+               "• CDN Delivery Latency: ~0.41 s",
+               "• Zero Server Maintenance Cost"],
+              border_color="#ef4444", header_color="#fee2e2")
+
+    # Connecting Flow Arrows (Horizontally aligned, clean offset)
+    draw_flow_arrow(ax, x1 + w1, 0.65, x2, 0.65, "#16a34a", 1.8, "Tensors")
+    draw_flow_arrow(ax, x1 + w1, 0.25, x2, 0.25, "#16a34a", 1.8, "Sequences")
+
+    draw_flow_arrow(ax, x2 + w2, 0.65, x3, 0.65, "#9333ea", 1.8, "Inference")
+    draw_flow_arrow(ax, x2 + w2, 0.25, x3, 0.25, "#9333ea", 1.8, "Inference")
+
+    draw_flow_arrow(ax, x3 + w3, 0.65, x4, 0.65, "#ea580c", 1.8, "Telemetry")
+    draw_flow_arrow(ax, x3 + w3, 0.25, x4, 0.25, "#ea580c", 1.8, "Forecasts")
+
+    draw_flow_arrow(ax, x4 + w4, 0.65, x5, 0.65, "#dc2626", 1.8, "Web Sync")
+    draw_flow_arrow(ax, x4 + w4, 0.25, x5, 0.25, "#dc2626", 1.8, "CDN Push")
 
     plt.tight_layout()
     out_path = os.path.join(DOC_DIR, "system_architecture.png")
     plt.savefig(out_path, dpi=300, facecolor=fig.get_facecolor(), bbox_inches='tight')
     plt.close()
-    print(f"[SUCCESS] Generated {out_path} (300 DPI)")
+    print(f"[SUCCESS] Regenerated {out_path} with spacious layout.")
 
 # =============================================================================
-# 2. GENERATE CONVLSTM2D-UNET ARCHITECTURE DIAGRAM
+# 2. GENERATE SPATIOUS CONVLSTM2D-UNET ARCHITECTURE DIAGRAM
 # =============================================================================
 def generate_convlstm_unet_architecture():
-    fig, ax = plt.subplots(figsize=(15, 8.5), dpi=300)
-    ax.set_xlim(-0.02, 1.02)
-    ax.set_ylim(-0.02, 1.02)
+    # Large 20x11 canvas
+    fig, ax = plt.subplots(figsize=(20, 11), dpi=300)
+    ax.set_xlim(-0.01, 1.01)
+    ax.set_ylim(-0.01, 1.01)
     ax.axis('off')
     
     fig.patch.set_facecolor('#ffffff')
     ax.set_facecolor('#ffffff')
 
-    # Title
+    # Title Banner
     ax.text(0.5, 0.98, "Hybrid ConvLSTM2D-UNet Inundation Segmentation Network", 
-            ha='center', va='top', fontsize=16, fontweight='black', color='#0f172a')
-    ax.text(0.5, 0.94, "Spatio-Temporal Sequence Learning Coupled with Multi-Scale Skip Decoder", 
-            ha='center', va='top', fontsize=10, color='#475569')
+            ha='center', va='top', fontsize=18, fontweight='black', color='#0f172a')
+    ax.text(0.5, 0.945, "Spatio-Temporal Recurrent Encoding Coupled with Multi-Scale Skip Decoder", 
+            ha='center', va='top', fontsize=11, color='#64748b')
 
-    # 1. Input Tensor Block
-    draw_box(ax, 0.02, 0.38, 0.13, 0.35, "Input Tensor\n(B, 5, 32, 32, 6)", 
-             "• Timesteps: 5 days\n• Spatial: 32×32\n• 6 Physical Channels:\n  c0: SAR Water Mask\n  c1: Optical NDWI\n  c2: Precipitation\n  c3: DEM Elevation\n  c4: Terrain Slope\n  c5: River Proximity", 
-             "#f1f5f9", "#0284c7", "#0369a1")
+    # 1. Input Tensor Card (Leftmost, x = 0.02)
+    draw_card(ax, 0.02, 0.28, 0.15, 0.54, "Input Multi-Modal Tensor\n(B, 5, 32, 32, 6)", 
+              ["• Timesteps: 5 temporal days",
+               "• Spatial Resolution: 32 x 32 grid",
+               "• 6 Physical Channels:",
+               "  - c0: SAR C-Band Water Mask",
+               "  - c1: Sentinel-2 Optical NDWI",
+               "  - c2: NASA GPM Rain / 50.0",
+               "  - c3: SRTM DEM Elevation / 3000m",
+               "  - c4: Terrain Slope / 45 deg",
+               "  - c5: Euclidean River Distance / 5000m",
+               "• Vectorized Tensor Synthesis",
+               "• Normalized Input Range: [0.0, 1.0]"],
+              border_color="#0284c7", header_color="#e0f2fe", title_color="#0369a1")
 
-    # 2. ConvLSTM2D Encoder Block
-    draw_box(ax, 0.19, 0.58, 0.16, 0.20, "ConvLSTM2D Layer 1\n(32 Filters, 3×3)", "Return Sequences = True\nBatch Normalization + LeakyReLU\nOutput: (B, 5, 32, 32, 32)", "#fdf4ff", "#c026d3", "#86198f")
-    draw_box(ax, 0.19, 0.25, 0.16, 0.20, "ConvLSTM2D Layer 2\n(16 Filters, 3×3)", "Return Sequences = False\nBatch Normalization + LeakyReLU\nOutput: (B, 32, 32, 16)", "#fdf4ff", "#c026d3", "#86198f")
+    # 2. ConvLSTM2D Recurrent Layers (Column 2, x = 0.21)
+    draw_card(ax, 0.21, 0.58, 0.17, 0.24, "ConvLSTM2D Layer 1\n(32 Filters, 3x3 Kernel)", 
+              ["• Return Sequences: True",
+               "• Batch Normalization + LeakyReLU",
+               "• Captures continuous temporal transitions",
+               "• Output: (B, 5, 32, 32, 32)"], 
+              border_color="#c026d3", header_color="#fae8ff", title_color="#86198f")
 
-    # 3. UNet Encoder & Bottleneck
-    draw_box(ax, 0.40, 0.58, 0.15, 0.20, "UNet Encoder Block\nConv2D(32, 3×3)", "LeakyReLU Activation\nSkip Feature Cache\nOutput: (B, 32, 32, 32)", "#ecfdf5", "#059669", "#065f46")
-    draw_box(ax, 0.40, 0.25, 0.15, 0.20, "Downsampling Block\nMaxPool2D(2×2)", "Spatial Compression\nOutput: (B, 16, 16, 32)", "#ecfdf5", "#059669", "#065f46")
-    draw_box(ax, 0.59, 0.25, 0.15, 0.20, "Bottleneck Block\nConv2D(64, 3×3)", "Deep Representation\nOutput: (B, 16, 16, 64)", "#fef3c7", "#d97706", "#92400e")
+    draw_card(ax, 0.21, 0.26, 0.17, 0.24, "ConvLSTM2D Layer 2\n(16 Filters, 3x3 Kernel)", 
+              ["• Return Sequences: False (Last Step)",
+               "• Batch Normalization + LeakyReLU",
+               "• Condenses temporal history into 2D state",
+               "• Output: (B, 32, 32, 16)"], 
+              border_color="#c026d3", header_color="#fae8ff", title_color="#86198f")
 
-    # 4. UNet Decoder & Skip Fusion
-    draw_box(ax, 0.59, 0.58, 0.15, 0.20, "Decoder Block\nUpSampling2D(2×2)", "Spatial Re-Expansion\nOutput: (B, 32, 32, 64)", "#eff6ff", "#2563eb", "#1e40af")
-    draw_box(ax, 0.78, 0.58, 0.18, 0.20, "Feature Fusion Block\nConcatenate + Conv2D(32)", "Skip Connection (32) + Decoder (64)\nOutput: (B, 32, 32, 32)", "#eff6ff", "#2563eb", "#1e40af")
+    # 3. UNet Encoder & Bottleneck (Column 3, x = 0.42)
+    draw_card(ax, 0.42, 0.58, 0.17, 0.24, "UNet Encoder Block\nConv2D(32, 3x3 Kernel)", 
+              ["• Spatial Feature Extraction",
+               "• LeakyReLU Activation",
+               "• Feeds Skip Connection Line",
+               "• Output: (B, 32, 32, 32)"], 
+              border_color="#059669", header_color="#d1fae5", title_color="#065f46")
 
-    # 5. Output Head
-    draw_box(ax, 0.78, 0.22, 0.18, 0.24, "Output Head\nConv2D(1, 1x1, Sigmoid)", "Spatial Flood Probability Map\nOutput: (B, 32, 32, 1) in [0.0, 1.0]\n\nProduction Risk Tiers:\n- >=45.0%: High Flood Risk\n- >=35.0%: Moderate Risk\n- <35.0%: Low Flood Risk", "#fef2f2", "#dc2626", "#991b1b")
+    draw_card(ax, 0.42, 0.26, 0.17, 0.24, "Downsampling Block\nMaxPool2D(2x2)", 
+              ["• Spatial Dimension Reduction",
+               "• Compression: 32x32 -> 16x16",
+               "• Expands receptive field",
+               "• Output: (B, 16, 16, 32)"], 
+              border_color="#059669", header_color="#d1fae5", title_color="#065f46")
+
+    # 4. Bottleneck & Decoder (Column 4, x = 0.63)
+    draw_card(ax, 0.63, 0.26, 0.16, 0.24, "Bottleneck Block\nConv2D(64, 3x3 Kernel)", 
+              ["• Deep Non-Linear Representation",
+               "• Channel Expansion: 32 -> 64",
+               "• High-level abstract feature learning",
+               "• Output: (B, 16, 16, 64)"], 
+              border_color="#d97706", header_color="#fef3c7", title_color="#92400e")
+
+    draw_card(ax, 0.63, 0.58, 0.16, 0.24, "Decoder Block\nUpSampling2D(2x2)", 
+              ["• Spatial Re-Expansion",
+               "• Restores 16x16 -> 32x32",
+               "• Bilinear/Nearest interpolation",
+               "• Output: (B, 32, 32, 64)"], 
+              border_color="#2563eb", header_color="#dbeafe", title_color="#1e40af")
+
+    # 5. Skip Fusion & Output Head (Column 5, x = 0.83)
+    draw_card(ax, 0.83, 0.58, 0.16, 0.24, "Feature Fusion Block\nConcatenate + Conv2D(32)", 
+              ["• Skip Connection Fusion:",
+               "  Encoder (32) + Decoder (64)",
+               "• Preserves fine spatial boundaries",
+               "• Conv2D(32, 3x3) refinement",
+               "• Output: (B, 32, 32, 32)"], 
+              border_color="#2563eb", header_color="#dbeafe", title_color="#1e40af")
+
+    draw_card(ax, 0.83, 0.22, 0.16, 0.28, "Output Head\nConv2D(1, 1x1, Sigmoid)", 
+              ["• Probability Heatmap: (B, 32, 32, 1)",
+               "• Pixel Values: [0.0, 1.0]",
+               "• Production Hazard Tiers:",
+               "  - High Risk: >= 45.00%",
+               "  - Moderate Risk: >= 35.00%",
+               "  - Low Risk: < 35.00%",
+               "• Peak & Mean Risk Parsing"], 
+              border_color="#dc2626", header_color="#fee2e2", title_color="#991b1b")
 
     # Flow Arrows
-    draw_arrow(ax, 0.15, 0.55, 0.19, 0.68, "#86198f", 2)
-    draw_arrow(ax, 0.27, 0.58, 0.27, 0.45, "#86198f", 2, "Temporal Sequence")
-    draw_arrow(ax, 0.35, 0.35, 0.40, 0.65, "#059669", 2, "Latent State")
-    draw_arrow(ax, 0.475, 0.58, 0.475, 0.45, "#059669", 2)
-    draw_arrow(ax, 0.55, 0.35, 0.59, 0.35, "#d97706", 2)
-    draw_arrow(ax, 0.665, 0.45, 0.665, 0.58, "#2563eb", 2)
-    draw_arrow(ax, 0.74, 0.68, 0.78, 0.68, "#2563eb", 2)
-    draw_arrow(ax, 0.87, 0.58, 0.87, 0.46, "#dc2626", 2)
+    draw_flow_arrow(ax, 0.17, 0.60, 0.21, 0.70, "#86198f", 2)
+    draw_flow_arrow(ax, 0.295, 0.58, 0.295, 0.50, "#86198f", 2, "Temporal Sequence")
+    draw_flow_arrow(ax, 0.38, 0.38, 0.42, 0.70, "#059669", 2, "Latent State")
+    draw_flow_arrow(ax, 0.505, 0.58, 0.505, 0.50, "#059669", 2)
+    draw_flow_arrow(ax, 0.59, 0.38, 0.63, 0.38, "#d97706", 2)
+    draw_flow_arrow(ax, 0.71, 0.50, 0.71, 0.58, "#2563eb", 2)
+    draw_flow_arrow(ax, 0.79, 0.70, 0.83, 0.70, "#2563eb", 2)
+    draw_flow_arrow(ax, 0.91, 0.58, 0.91, 0.50, "#dc2626", 2)
 
-    # UNet Skip Connection (Dashed green line across the top)
+    # UNet Skip Connection (Dashed green curve across top with clear clearance)
     skip_arrow = patches.FancyArrowPatch(
-        (0.55, 0.72), (0.78, 0.72),
+        (0.59, 0.83), (0.83, 0.83),
         arrowstyle='-|>,head_length=6,head_width=4',
         color='#059669', linewidth=2.2, linestyle='--', zorder=5
     )
     ax.add_patch(skip_arrow)
-    ax.text(0.665, 0.74, "UNet Skip Connection (Feature Preservation)", ha='center', va='bottom', fontsize=8.5, fontweight='bold', color='#059669')
+    ax.text(0.71, 0.845, "UNet Skip Connection (Feature Preservation)", ha='center', va='bottom', fontsize=8.5, fontweight='bold', color='#059669')
 
-    # Performance Footnote
-    ax.text(0.5, 0.05, "Quantitative Test Validation: Overall Accuracy: 97.00% | Flood Inundation Recall: 99.00% | F1-Score: 0.970 | Single Patch Latency: 19.1 ms", 
-            ha='center', va='center', fontsize=9, fontweight='bold', color='#0f172a',
-            bbox=dict(boxstyle='round,pad=0.4', facecolor='#f1f5f9', edgecolor='#cbd5e1'))
+    # Footnote Box at Bottom
+    footnote_text = "Validation Metrics (929 Test Rasters): Overall Accuracy: 97.00% | Flood Recall: 99.00% | F1-Score: 0.970 | Inference Latency: 19.1 ms/patch"
+    ax.text(0.5, 0.08, footnote_text, 
+            ha='center', va='center', fontsize=9.5, fontweight='bold', color='#0f172a',
+            bbox=dict(boxstyle='round,pad=0.5', facecolor='#f8fafc', edgecolor='#94a3b8', linewidth=1.2))
 
     plt.tight_layout()
     out_path = os.path.join(DOC_DIR, "convlstm_unet_architecture.png")
     plt.savefig(out_path, dpi=300, facecolor=fig.get_facecolor(), bbox_inches='tight')
     plt.close()
-    print(f"[SUCCESS] Generated {out_path} (300 DPI)")
+    print(f"[SUCCESS] Regenerated {out_path} with spacious layout.")
 
 if __name__ == "__main__":
     generate_system_architecture()
