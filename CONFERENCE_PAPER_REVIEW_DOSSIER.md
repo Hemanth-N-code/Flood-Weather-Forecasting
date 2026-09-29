@@ -84,10 +84,10 @@ Rolling 24-hour sequences of 8 standardized continuous variables extracted from 
 > **Critical Safety Metric**: The **99.0% recall on Class 1** guarantees that the system minimizes false negatives, preventing undetected flood events in populated basins.
 
 #### Visual Result Plots for Paper Figures:
-* 📊 **Confusion Matrix**: `models/confusion_matrix.png`
-* 📈 **Accuracy Convergence Curve**: `models/accuracy.png`
-* 📉 **BCE Training & Validation Loss**: `models/loss.png`
-* 📉 **Pixel Prediction Distribution**: `models/prediction_distribution.png`
+* 📊 **Confusion Matrix**: `doc/confusion_matrix.png`
+* 📈 **Accuracy Convergence Curve**: `doc/accuracy.png`
+* 📉 **BCE Training & Validation Loss**: `doc/loss.png`
+* 📉 **Pixel Prediction Distribution**: `doc/prediction_distribution.png`
 
 ---
 
@@ -100,8 +100,8 @@ Rolling 24-hour sequences of 8 standardized continuous variables extracted from 
 | **Root Mean Square Error (RMSE)** | **0.1955** | $< 0.25$ | Stable against rapid atmospheric shifts |
 
 #### Visual Result Plots for Paper Figures:
-* 📉 **Weather LSTM Training Loss Curve**: `models/training_loss.png`
-* 📊 **Weather Prediction Score & R² Plot**: `models/weather Score.png`
+* 📉 **Weather LSTM Training Loss Curve**: `doc/training_loss.png`
+* 📊 **Weather Prediction Score & R² Plot**: `doc/weather Score.png`
 
 ---
 
@@ -177,3 +177,25 @@ Across 16 operational Assam floodplains, model predictions demonstrated rigorous
 | **GitHub Source Code** | 🟢 Public | **[https://github.com/Hemanth-N-code/Flood-Weather-Forecasting](https://github.com/Hemanth-N-code/Flood-Weather-Forecasting)** |
 | **Edge Background Daemon** | 🟢 Ready | `start_sentinel_service.bat` (Executes every 60 min) |
 | **Firebase Console** | 🟢 Active | `https://console.firebase.google.com/project/flood-weather-app/overview` |
+
+---
+
+## 8. Complete 12-Figure Catalog for Academic Paper Submission
+
+All high-resolution figures (300 DPI) are located in the [`doc/`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc) directory:
+
+| Fig # | File Name | Resolution | Description / Suggested Paper Caption |
+| :---: | :--- | :---: | :--- |
+| **Fig 1** | [`doc/system_architecture.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/system_architecture.png) | 5970 × 3270 (300 DPI) | **End-to-End Operational Framework**: 5-tier architecture from multi-sensor data lake through ConvLSTM2D-UNet edge inference to Firebase cloud sync and public GIS deployment. |
+| **Fig 2** | [`doc/convlstm_unet_architecture.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/convlstm_unet_architecture.png) | 5970 × 3270 (300 DPI) | **Spatiotemporal ConvLSTM2D-UNet Architecture**: 6-channel spatiotemporal tensor ingestion, recurrence compression, bottleneck feature extraction, skip fusion, and sigmoid risk head. |
+| **Fig 3** | [`doc/accuracy.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/accuracy.png) | 1800 × 1200 | **Flood Inundation Model Accuracy**: Convergence of training and validation accuracy reaching 97.00% across epochs. |
+| **Fig 4** | [`doc/loss.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/loss.png) | 1800 × 1200 | **Binary Cross-Entropy Loss Curve**: Demonstrates stable convergence without overfitting across training iterations. |
+| **Fig 5** | [`doc/confusion_matrix.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/confusion_matrix.png) | 1800 × 1200 | **Normalized Confusion Matrix**: Highlighting 99.00% flood recall on 929 test rasters to eliminate safety-critical false negatives. |
+| **Fig 6** | [`doc/prediction_distribution.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/prediction_distribution.png) | 1800 × 1200 | **Pixel Prediction Distribution**: Histogram showing sharp bimodal confidence separation between dry land and flooded pixels. |
+| **Fig 7** | [`doc/training_loss.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/training_loss.png) | 1800 × 1200 | **Weather LSTM Training Loss Curve**: Mean squared error (MSE) convergence over ERA5 atmospheric reanalysis sequences. |
+| **Fig 8** | [`doc/weather Score.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/weather%20Score.png) | 1800 × 1200 | **Atmospheric Forecasting Performance**: Multi-variable evaluation across temperature, pressure, precipitation, and wind speed ($R^2 > 0.93$). |
+| **Fig 9** | [`doc/Risk_Zone.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/Risk_Zone.png) | 1920 × 1080 | **Live Leaflet GIS Risk Map**: Real-time spatial risk choropleth over 16 monitored Assam floodplains. |
+| **Fig 10** | [`doc/Silchar_Risk_info.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/Silchar_Risk_info.png) | 1920 × 1080 | **Basin-Level Risk Telemetry**: Real-time risk scoring, sensor breakdown, and automated early warning advisory for Silchar (Barak Valley). |
+| **Fig 11** | [`doc/Weather_info.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/Weather_info.png) | 1920 × 1080 | **7-Day Multi-Variable Meteorological Dashboard**: Forecasted temperature, precipitation probability, humidity, and barometric pressure. |
+| **Fig 12** | [`doc/Latency.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/Latency.png) | 1800 × 1200 | **Real-World Operational Latency**: Stage-by-stage runtime breakdown showing sub-second inference and 61s total cycle completion. |
+
