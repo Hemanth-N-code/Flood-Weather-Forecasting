@@ -1,47 +1,142 @@
-\documentclass[12pt,a4paper]{report}
+\documentclass[12pt,a4paper,oneside]{report}
 
 % =========================================================================
-% UNIVERSAL PACKAGE CONFIGURATION (100% Overleaf & Standard TeX Compatible)
+% PROFESSIONAL ACADEMIC REPORT CONFIGURATION
+% Compatible with Overleaf and standard LaTeX distributions
 % =========================================================================
+
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[margin=1in]{geometry}
-\linespread{1.3} % 1.5 Line Spacing without external package dependencies
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{setspace}
+
+\usepackage[
+    a4paper,
+    top=1.0in,
+    bottom=1.0in,
+    left=1.25in,
+    right=1.0in,
+    headheight=15pt
+]{geometry}
+
+\onehalfspacing
 
 \usepackage{amsmath,amssymb,amsfonts}
+
 \usepackage{graphicx}
-\graphicspath{{doc/}{./}} % Seamless image loading from doc/ or root folder
+\graphicspath{{doc/}{./}}
 \usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage{array}
 \usepackage{float}
-\usepackage{xcolor}
-\usepackage[hyphens]{url}
-\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
 
-\pagestyle{headings}
+\usepackage{enumitem}
+\setlist[itemize]{topsep=4pt,itemsep=2pt,parsep=0pt}
+\setlist[enumerate]{topsep=4pt,itemsep=3pt,parsep=0pt}
+
+\usepackage{xcolor}
+\definecolor{ReportBlue}{RGB}{0,70,127}
+
+\usepackage[hyphens]{url}
+\usepackage[
+    colorlinks=true,
+    linkcolor=ReportBlue,
+    citecolor=ReportBlue,
+    urlcolor=ReportBlue,
+    bookmarksopen=true,
+    bookmarksnumbered=true,
+    pdftitle={EdgeAI Sentinel},
+    pdfauthor={Hemanth N},
+    plainpages=false,
+    pdfpagelabels=true
+]{hyperref}
+
+\usepackage{titlesec}
+
+\titleformat{\chapter}[display]
+    {\normalfont\bfseries\centering}
+    {\Large\chaptername\ \thechapter}
+    {8pt}
+    {\LARGE}
+    [\vspace{8pt}\titlerule]
+
+\titlespacing*{\chapter}{0pt}{-10pt}{24pt}
+
+\titleformat{\section}
+    {\normalfont\Large\bfseries}
+    {\thesection}
+    {0.75em}
+    {}
+
+\titleformat{\subsection}
+    {\normalfont\large\bfseries}
+    {\thesubsection}
+    {0.75em}
+    {}
+
+\captionsetup{
+    font=small,
+    labelfont=bf,
+    justification=centering,
+    singlelinecheck=true
+}
+
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{EdgeAI Sentinel}}
+\fancyhead[R]{\small\textit{\nouppercase{\leftmark}}}
+\fancyfoot[C]{\small\thepage}
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[C]{\small\thepage}
+    \renewcommand{\headrulewidth}{0pt}
+}
+
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+
+\renewcommand{\contentsname}{Table of Contents}
+\renewcommand{\listfigurename}{List of Figures}
+\renewcommand{\listtablename}{List of Tables}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\renewcommand{\arraystretch}{1.15}
 
 \begin{document}
 
 % =========================================================================
 % FRONT MATTER: TITLE PAGE
+% Replace institutional placeholders (guide, designation, university, USN, etc.) before final submission.
 % =========================================================================
 \begin{titlepage}
+\hypersetup{pageanchor=false}
 \centering
 \vspace*{0.5cm}
 
 {\Large \textbf{A PROJECT REPORT ON}}\\[0.8cm]
 
-{\LARGE \textbf{EDGEAI SENTINEL: AN AUTONOMOUS SPATIO-TEMPORAL DEEP LEARNING AND DECOUPLED CLOUD FRAMEWORK FOR OPERATIONAL FLOOD INUNDATION AND METEOROLOGICAL FORECASTING}}\\[0.8cm]
+{\LARGE\bfseries EDGEAI SENTINEL}\\[0.35cm]
+{\large\bfseries An Autonomous Spatio-Temporal Deep Learning and Decoupled Cloud Framework for Operational Flood Inundation and Meteorological Forecasting}\\[0.9cm]
 
 {\large \textit{Submitted in partial fulfillment of the requirements for the award of the degree of}}\\[0.6cm]
 
-{\Large \textbf{BACHELOR OF TECHNOLOGY / MASTER OF TECHNOLOGY}}\\[0.3cm]
+{\Large \textbf{BACHELOR OF TECHNOLOGY}}\\[0.3cm]
 {\large \textbf{IN}}\\[0.3cm]
 {\Large \textbf{COMPUTER SCIENCE AND ENGINEERING}}\\[1.2cm]
 
 \textbf{Submitted By:}\\[0.2cm]
 {\large \textbf{HEMANTH N}}\\[0.2cm]
-\text{USN / Roll No.: Candidate Registration Number}\\[1.2cm]
+\text{USN / Roll No.: \underline{\hspace{6cm}}}\\[1.2cm]
 
 \textbf{Under the Guidance of:}\\[0.2cm]
 {\large \textbf{Project Guide / Academic Supervisor}}\\[0.2cm]
@@ -53,6 +148,7 @@
 {\large \textbf{ACADEMIC YEAR: 2025--2026}}
 
 \end{titlepage}
+\hypersetup{pageanchor=true}
 
 % =========================================================================
 % CERTIFICATE & DECLARATION
@@ -65,7 +161,7 @@
 \addcontentsline{toc}{chapter}{Certificate}
 \thispagestyle{plain}
 
-This is to certify that the project report entitled \textbf{``EdgeAI Sentinel: An Autonomous Spatio-Temporal Deep Learning and Decoupled Cloud Framework for Operational Flood Inundation and Meteorological Forecasting in the Brahmaputra Basin''} submitted by \textbf{Hemanth N} in partial fulfillment of the requirements for the award of the degree of \textbf{Bachelor of Technology / Master of Technology in Computer Science and Engineering} is a bona fide record of the research and development work carried out by them under my supervision and guidance.
+This is to certify that the project report entitled \textbf{``EdgeAI Sentinel: An Autonomous Spatio-Temporal Deep Learning and Decoupled Cloud Framework for Operational Flood Inundation and Meteorological Forecasting in the Brahmaputra Basin''} submitted by \textbf{Hemanth N} in partial fulfillment of the requirements for the award of the degree of \textbf{Bachelor of Technology in Computer Science and Engineering} is a bona fide record of the research and development work carried out by them under my supervision and guidance.
 
 The results embodied in this report have not been submitted to any other University or Institute for the award of any degree, diploma, or academic distinction.
 
@@ -127,7 +223,7 @@ Seasonal flash floods along the Brahmaputra and Barak river basins in Assam, Ind
 
 To overcome these constraints, this project engineers \textbf{EdgeAI Sentinel}, an end-to-end, autonomous edge-to-cloud operational framework that couples multi-modal satellite remote sensing, spatiotemporal deep learning, serverless cloud synchronization, and public geographic information systems (GIS). The inundation segmentation engine ingests a multi-modal 6-channel spatiotemporal tensor $\mathbf{X} \in \mathbb{R}^{B \times 5 \times 32 \times 32 \times 6}$ incorporating Sentinel-1 Synthetic Aperture Radar (SAR) backscatter, Sentinel-2 optical Normalized Difference Water Index (NDWI), NASA GPM IMERG precipitation accumulation, SRTM 30\,m Digital Elevation Models (DEM), topographic slope gradient, and JRC surface water river proximity. Inundation dynamics are forecasted using a hybrid \textbf{ConvLSTM2D-UNet} architecture combining recurrent convolutional temporal memory with high-resolution skip-connection boundary reconstruction. Concurrently, a stacked \textbf{Long Short-Term Memory (LSTM)} network ingests rolling 24-hour multivariate atmospheric sequences from ECMWF ERA5 reanalysis and live meteorological observations.
 
-Evaluated over 929 independent test rasters, the ConvLSTM2D-UNet achieves an \textbf{overall accuracy of 97.00\%} and an exceptional \textbf{flood recall of 99.00\%} with an F1-score of 0.970, ensuring near-zero false negatives for safety-critical flood inundation detection. The atmospheric LSTM forecaster yields a coefficient of determination ($R^2$) of \textbf{0.9352} and a Mean Absolute Error (MAE) of 0.0975. The complete pipeline features a zero-cache cold-start capability (securely downloading model weights from Firebase Cloud Storage in 30.7\,s) and completes end-to-end operational inference in \textbf{35.9\,s} on standard CPU hardware, with pure neural forward passes taking only \textbf{1.22\,s} (19.1\,ms per spatial patch). Predicted alerts are synchronized in real time to Google Cloud Firestore and rendered to the public through an interactive, mobile-responsive Leaflet GIS web dashboard (\url{https://flood-weather-app.web.app}).
+Evaluated over 929 independent test rasters, the ConvLSTM2D-UNet achieves an \textbf{overall accuracy of 97.00\%} and an exceptional \textbf{flood recall of 99.00\%} with an F1-score of 0.970, ensuring near-zero false negatives for safety-critical flood inundation detection. The atmospheric LSTM forecaster yields a coefficient of determination ($R\texorpdfstring{^2$}{R2}) of \textbf{0.9352} and a Mean Absolute Error (MAE) of 0.0975. The complete pipeline features a zero-cache cold-start capability (securely downloading model weights from Firebase Cloud Storage in 30.7\,s) and completes end-to-end operational inference in \textbf{35.9\,s} on standard CPU hardware, with pure neural forward passes taking only \textbf{1.22\,s} (19.1\,ms per spatial patch). Predicted alerts are synchronized in real time to Google Cloud Firestore and rendered to the public through an interactive, mobile-responsive Leaflet GIS web dashboard (\url{https://flood-weather-app.web.app}).
 
 \vspace{0.8cm}
 \noindent
@@ -309,7 +405,7 @@ The client-facing user interface is deployed on Firebase Hosting (\url{https://f
 \section{Spatial Framing and Study Area}
 The geographic domain centers on the state of Assam, northeastern India, bounded between latitudes $24.0^\circ\text{N}$ to $28.0^\circ\text{N}$ and longitudes $89.5^\circ\text{E}$ to $96.0^\circ\text{E}$. Within this domain, 16 critical floodplains across both the Brahmaputra Valley (e.g., Barpeta, Majuli, Tezpur, Dhemaji) and the Barak Valley (Silchar, Hailakandi, Karimganj) are continuously monitored.
 
-\section{The 6-Band Inundation Tensor: $\mathbf{X} \in \mathbb{R}^{B \times 5 \times 32 \times 32 \times 6}$}
+\section{The 6-Band Inundation Tensor: \texorpdfstring{$\mathbf{X} \in \mathbb{R}^{B \times 5 \times 32 \times 32 \times 6}$}{X in R^{B x 5 x 32 x 32 x 6}}}
 Each spatial patch covers an area of $32 \times 32$ pixels across 5 consecutive historical days ($t-4, t-3, t-2, t-1, t$). The 6 physical channels are formulated as follows:
 
 \subsection{Channel 0 ($c_0$): Sentinel-1 SAR Water Mask}
@@ -376,7 +472,7 @@ $c_5$ & River Proximity & JRC Global Surface Water & 30\,m & $\min(d_{\text{rive
 \end{tabularx}
 \end{table}
 
-\section{The Atmospheric Sequence Matrix: $\mathbf{W} \in \mathbb{R}^{B \times 24 \times 8}$}
+\section{The Atmospheric Sequence Matrix: \texorpdfstring{$\mathbf{W} \in \mathbb{R}^{B \times 24 \times 8}$}{W in R^{B x 24 x 8}}}
 The atmospheric model processes rolling 24-hour sequences of 8 meteorological dimensions:
 \begin{enumerate}
     \item $T_{\text{dew}}$: Dewpoint temperature at 2 meters ($^\circ$C).
@@ -588,7 +684,7 @@ Table~\ref{tab:weather_results} and Figure~\ref{fig:weather_visual_results} deta
 \toprule
 \textbf{Metric} & \textbf{Value} & \textbf{Target Threshold} & \textbf{Physical Significance} \\
 \midrule
-Coefficient of Det. ($R^2$) & \textbf{0.9352} & $> 0.85$ & Explains 93.52\% sequence variance \\
+Coefficient of Det. ($R\texorpdfstring{^2$}{R2}) & \textbf{0.9352} & $> 0.85$ & Explains 93.52\% sequence variance \\
 Mean Absolute Error (MAE) & \textbf{0.0975} & $< 0.15$ & Sub-degree precision \\
 Root Mean Sq. Error (RMSE) & \textbf{0.1955} & $< 0.25$ & Stable against sudden storms \\
 \bottomrule
