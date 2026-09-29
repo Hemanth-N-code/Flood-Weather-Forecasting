@@ -21,3 +21,11 @@ service_account.json
 Thumbs.db
 .vscode/
 .idea/
+
+# LaTeX build artifacts
+*.aux
+*.lof
+*.log
+*.lot
+*.out
+*.toc
