@@ -48,7 +48,7 @@
     urlcolor=ReportBlue,
     bookmarksopen=true,
     bookmarksnumbered=true,
-    pdftitle={5G-Enabled Edge AI Flood Forecasting and Weather Prediction},
+    pdftitle={5G-Enabled Edge Computing for Flood Forecasting and Weather Prediction},
     pdfauthor={Hemanth N},
     plainpages=false,
     pdfpagelabels=true
@@ -88,7 +88,7 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\textit{5G Edge AI Flood Sentinel}}
+\fancyhead[L]{\small\textit{5G Edge Computing Flood Sentinel}}
 \fancyhead[R]{\small\textit{\nouppercase{\leftmark}}}
 \fancyfoot[C]{\small\thepage}
 
@@ -125,8 +125,8 @@
 
 {\Large \textbf{A PROJECT REPORT ON}}\\[0.8cm]
 
-{\LARGE\bfseries EDGEAI SENTINEL}\\[0.35cm]
-{\large\bfseries An Autonomous Spatio-Temporal Deep Learning and Decoupled Cloud Framework for Operational Flood Inundation and Meteorological Forecasting}\\[0.9cm]
+{\LARGE\bfseries 5G-ENABLED EDGE COMPUTING FOR FLOOD FORECASTING AND WEATHER PREDICTION}\\[0.4cm]
+{\large\bfseries An Autonomous Spatio-Temporal Deep Learning and Decoupled Cloud Telemetry Framework for the Brahmaputra Basin}\\[0.8cm]
 
 {\large \textit{Submitted in partial fulfillment of the requirements for the award of the degree of}}\\[0.6cm]
 
@@ -161,7 +161,7 @@
 \addcontentsline{toc}{chapter}{Certificate}
 \thispagestyle{plain}
 
-This is to certify that the project report entitled \textbf{``5G-Enabled Edge AI Flood Forecasting and Weather Prediction System: An Autonomous Spatio-Temporal Deep Learning and Decoupled Cloud Framework for the Brahmaputra Basin''} submitted by \textbf{Hemanth N} in partial fulfillment of the requirements for the award of the degree of \textbf{Bachelor of Technology in Computer Science and Engineering} is a bona fide record of the research and development work carried out by them under my supervision and guidance.
+This is to certify that the project report entitled \textbf{``5G-Enabled Edge Computing for Flood Forecasting and Weather Prediction: An Autonomous Spatio-Temporal Deep Learning and Decoupled Cloud Telemetry Framework for the Brahmaputra Basin''} submitted by \textbf{Hemanth N} in partial fulfillment of the requirements for the award of the degree of \textbf{Bachelor of Technology in Computer Science and Engineering} is a bona fide record of the research and development work carried out by them under my supervision and guidance.
 
 The results embodied in this report have not been submitted to any other University or Institute for the award of any degree, diploma, or academic distinction.
 
@@ -179,7 +179,7 @@ Institution Name & Institution Name \\
 \addcontentsline{toc}{chapter}{Declaration}
 \thispagestyle{plain}
 
-I hereby declare that the work presented in this project report entitled \textbf{``5G-Enabled Edge AI Flood Forecasting and Weather Prediction System: An Autonomous Spatio-Temporal Deep Learning and Decoupled Cloud Framework for the Brahmaputra Basin''} is an authentic record of my own research and engineering implementation carried out under the supervision of my project guide.
+I hereby declare that the work presented in this project report entitled \textbf{``5G-Enabled Edge Computing for Flood Forecasting and Weather Prediction: An Autonomous Spatio-Temporal Deep Learning and Decoupled Cloud Telemetry Framework for the Brahmaputra Basin''} is an authentic record of my own research and engineering implementation carried out under the supervision of my project guide.
 
 I also declare that this report has not been submitted previously in part or in full to any other University or Institution for any degree, diploma, or academic fellowship. The software source code, deep learning models, datasets, and cloud architectures described herein are authentic implementations.
 
@@ -221,7 +221,7 @@ Finally, I thank my family and peers for their continuous support and patience t
 
 Seasonal flash floods along the Brahmaputra and Barak river basins in Assam, India, represent severe, recurring hydrometeorological hazards that inflict catastrophic damage on agrarian communities, civic infrastructure, and human lives. Traditional flood warning frameworks depend upon two-dimensional numerical hydrodynamic solvers (e.g., HEC-RAS, MIKE 21) based on iterative shallow-water differential equations. Although physically deterministic, their severe computational requirements (demanding 4 to 12 hours of supercomputing compute per 48-hour simulation window) critically bottleneck early evacuation notices.
 
-To overcome these constraints, this project engineers \textbf{EdgeAI Sentinel}, an end-to-end, autonomous edge-to-cloud operational framework that couples multi-modal satellite remote sensing, spatiotemporal deep learning, serverless cloud synchronization, and public geographic information systems (GIS). The inundation segmentation engine ingests a multi-modal 6-channel spatiotemporal tensor $\mathbf{X} \in \mathbb{R}^{B \times 5 \times 32 \times 32 \times 6}$ incorporating Sentinel-1 Synthetic Aperture Radar (SAR) backscatter, Sentinel-2 optical Normalized Difference Water Index (NDWI), NASA GPM IMERG precipitation accumulation, SRTM 30\,m Digital Elevation Models (DEM), topographic slope gradient, and JRC surface water river proximity. Inundation dynamics are forecasted using a hybrid \textbf{ConvLSTM2D-UNet} architecture combining recurrent convolutional temporal memory with high-resolution skip-connection boundary reconstruction. Concurrently, a stacked \textbf{Long Short-Term Memory (LSTM)} network ingests rolling 24-hour multivariate atmospheric sequences from ECMWF ERA5 reanalysis and live meteorological observations.
+To overcome these constraints, this project engineers the \textbf{5G-Enabled Edge AI Sentinel} framework, an end-to-end, autonomous edge-to-cloud operational framework that couples multi-modal satellite remote sensing, spatiotemporal deep learning, serverless cloud synchronization, and public geographic information systems (GIS). The inundation segmentation engine ingests a multi-modal 6-channel spatiotemporal tensor $\mathbf{X} \in \mathbb{R}^{B \times 5 \times 32 \times 32 \times 6}$ incorporating Sentinel-1 Synthetic Aperture Radar (SAR) backscatter, Sentinel-2 optical Normalized Difference Water Index (NDWI), NASA GPM IMERG precipitation accumulation, SRTM 30\,m Digital Elevation Models (DEM), topographic slope gradient, and JRC surface water river proximity. Inundation dynamics are forecasted using a hybrid \textbf{ConvLSTM2D-UNet} architecture combining recurrent convolutional temporal memory with high-resolution skip-connection boundary reconstruction. Concurrently, a stacked \textbf{Long Short-Term Memory (LSTM)} network ingests rolling 24-hour multivariate atmospheric sequences from ECMWF ERA5 reanalysis and live meteorological observations.
 
 Evaluated over 929 independent test rasters, the ConvLSTM2D-UNet achieves an \textbf{overall accuracy of 97.00\%} and an exceptional \textbf{flood recall of 99.00\%} with an F1-score of 0.970, ensuring near-zero false negatives for safety-critical flood inundation detection. The atmospheric LSTM forecaster yields a coefficient of determination ($R^2$) of \textbf{0.9352} and a Mean Absolute Error (MAE) of 0.0975. The complete pipeline features a zero-cache cold-start capability (securely downloading model weights from Firebase Cloud Storage in 30.7\,s) and completes end-to-end operational inference in \textbf{35.9\,s} on standard CPU hardware, with pure neural forward passes taking only \textbf{1.22\,s} (19.1\,ms per spatial patch). Predicted alerts are synchronized in real time to Google Cloud Firestore and rendered to the public through an interactive, mobile-responsive Leaflet GIS web dashboard (\url{https://flood-weather-app.web.app}).
 
@@ -350,12 +350,12 @@ Despite recent progress, the literature reveals critical engineering and operati
 \label{chap:system_arch}
 
 \section{System Overview and Decoupled Architecture}
-The EdgeAI Sentinel framework is designed around a decoupled, 5-tier architecture that guarantees low operational latency, resilience against local infrastructure failure, and high-concurrency client accessibility. Figure~\ref{fig:system_arch_large} illustrates the complete data flow.
+The 5G-enabled edge forecasting framework is designed around a decoupled, 5-tier architecture that guarantees low operational latency, resilience against local infrastructure failure, and high-concurrency client accessibility. Figure~\ref{fig:system_arch_large} illustrates the complete data flow.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{doc/system_architecture.png}
-\caption{End-to-End Five-Tier System Architecture of EdgeAI Sentinel.}
+\caption{End-to-End Five-Tier System Architecture of the 5G-Enabled Edge AI Framework.}
 \label{fig:system_arch_large}
 \end{figure}
 
@@ -396,7 +396,7 @@ The edge computing daemon (\texttt{run\_live\_sentinel.py}) executes periodic te
 \end{itemize}
 
 \subsection{Tier 4: Decoupled Cloud Synchronization (Firebase)}
-Instead of deploying heavy, custom HTTP/REST microservice servers on field edge hardware, EdgeAI Sentinel leverages the Google Firebase ecosystem:
+Instead of deploying heavy, custom HTTP/REST microservice servers on field edge hardware, the 5G-enabled edge architecture leverages the Google Firebase ecosystem:
 \begin{itemize}
     \item \textbf{Firebase Cloud Storage}: Serves as the central repository for trained model weights (\texttt{models/flood\_model\_v1.keras}, \texttt{models/weather\_lstm\_model.h5}, \texttt{models/weather\_scaler.pkl}).
     \item \textbf{Google Cloud Firestore}: Acts as a decoupled NoSQL buffer. The edge daemon securely authenticates using a private service account key and pushes structured documents into the \texttt{predictions} and \texttt{weather\_forecasts} collections.
@@ -587,10 +587,10 @@ The edge computing pipeline executes continuously on field hardware. The operati
 \end{enumerate}
 
 \section{5G Wireless Telemetry and Cloud Synchronization}
-The EdgeAI Sentinel node is architected to operate over high-speed cellular networks. The communication lifecycle operates as follows:
+The 5G-enabled edge computing node is architected to operate over high-speed cellular networks. The communication lifecycle operates as follows:
 \begin{itemize}
     \item \textbf{5G Downlink Ingestion (eMBB)}: During cold starts and scheduled observation cycles, the edge node ingests live hourly thermodynamic streams from the Open-Meteo REST API and retrieves model updates from Firebase Storage over high-throughput cellular channels.
-    \item \textbf{Local Neural Processing}: The node processes the 6-band tensor $\mathbf{X} \in \mathbb{R}^{B \times 5 \times 32 \times 32 \times 6}$ across 16 monitored basins in .868\,\text{s}$ and 13 weather stations in .352\,\text{s}$ entirely on local compute hardware, without cloud compute latency.
+    \item \textbf{Local Neural Processing}: The node processes the 6-band tensor $\mathbf{X} \in \mathbb{R}^{B \times 5 \times 32 \times 32 \times 6}$ across 16 monitored basins in $0.868\,\text{s}$ and 13 weather stations in $0.352\,\text{s}$ entirely on local compute hardware, without cloud compute latency.
     \item \textbf{5G Low-Latency Uplink (URLLC-Profile Telemetry)}: Upon computing inundation risks and weather states, the edge node serializes the results into ultra-compact JSON documents ($\approx 2.4\,\text{KB}$ each) and commits them to Google Cloud Firestore via authenticated gRPC/HTTPS sockets over the 5G connection.
 \end{itemize}
 
@@ -857,7 +857,7 @@ The front-end client is hosted on Google Firebase Hosting (\url{https://flood-we
 \label{chap:conclusion}
 
 \section{Summary of Achievements}
-This project successfully designed, implemented, benchmarked, and publicly deployed \textbf{EdgeAI Sentinel}, an autonomous edge-to-cloud spatiotemporal deep learning framework for operational flood inundation and meteorological forecasting across the Brahmaputra and Barak basins in Assam.
+This project successfully designed, implemented, benchmarked, and publicly deployed the \textbf{5G-Enabled Edge AI Sentinel} framework, an autonomous edge-to-cloud spatiotemporal deep learning framework for operational flood inundation and meteorological forecasting across the Brahmaputra and Barak basins in Assam.
 
 Key achievements include:
 \begin{itemize}
