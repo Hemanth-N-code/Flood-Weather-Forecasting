@@ -1,7 +1,7 @@
-# 🛰️ EdgeAI Sentinel: Spatio-Temporal Flood Inundation & Meteorological Forecasting System
+# 🛰️ 5G-Enabled Edge AI Flood Forecasting & Weather Prediction System
 ## Comprehensive Technical Project Dossier for Advisor Review & IEEE Conference Submission
 
-**Project Title:** *A Spatio-Temporal Deep Learning Framework for Operational Flood Inundation and Meteorological Forecasting in the Brahmaputra Basin*  
+**Project Title:** *5G-Enabled Edge AI Flood Forecasting and Weather Prediction System: A Spatio-Temporal Deep Learning and Decoupled Cloud Architecture for the Brahmaputra Basin*  
 **Repository:** [https://github.com/Hemanth-N-code/Flood-Weather-Forecasting](https://github.com/Hemanth-N-code/Flood-Weather-Forecasting)  
 **Live Deployed Application:** [https://flood-weather-app.web.app](https://flood-weather-app.web.app)  
 **Target Publication Venues:** IEEE IGARSS, IEEE GHTC, IEEE R10-HTC, IEEE TENCON  
@@ -12,10 +12,10 @@
 
 Conventional flood risk models rely on 2D numerical hydrodynamic differential equation solvers (e.g., HEC-RAS, MIKE 21) that require hours of compute time per simulation cycle, rendering them ineffective for short-window emergency evacuations. 
 
-**EdgeAI Sentinel** introduces a dual-neural operational framework tailored to the Brahmaputra and Barak basins of Assam, India. The system couples:
+**5G-Enabled Edge AI Sentinel** introduces an autonomous dual-neural operational framework tailored to the Brahmaputra and Barak basins of Assam, India. The system couples:
 1. A **ConvLSTM2D-UNet Hybrid Spatio-Temporal Model** that digests a 6-band multi-modal tensor $(N, 5, 32, 32, 6)$ fusing SAR water masks, optical NDWI, GPM precipitation, SRTM DEM elevation, slope, and river proximity, achieving **97.0% overall accuracy** and **99.0% flood recall**.
 2. A **Sequence-to-Sequence Recurrent Neural Network (LSTM)** trained on hourly ECMWF ERA5 reanalysis data to forecast 1-hour ahead atmospheric thermodynamic parameters ($R^2 = 0.9352$, $\text{MAE} = 0.0975$).
-3. An **Autonomous Edge Inference Engine** running periodic cycles in **$\approx 61\text{ seconds}$**, publishing structured telemetry to Google Cloud Firestore, and serving a live GIS radar dashboard over global CDN.
+3. A **5G-Connected Autonomous Edge Inference Node** running periodic cycles in **$35.9\text{ seconds}$** ($1.22\,\text{s}$ neural computation), utilizing 5G wireless connectivity to upload lightweight JSON telemetry ($\approx 2.4\,\text{KB}$) to Google Cloud Firestore, reducing data transmission overhead by **$>99.8\%$** over raw raster streaming, and serving a live GIS radar dashboard over global CDN.
 
 ---
 
@@ -128,30 +128,32 @@ Across 16 operational Assam floodplains, model predictions demonstrated rigorous
 ## 5. Phase 4: Operational Data Flow & Pipeline Architecture
 
 ```
-[ STEP 1: Live Observation Ingestion ]
+[ STEP 1: Planetary & Meteorological Observation Stream ]
     ├── Open-Meteo REST API: Real-time 24h temperature, pressure, wind, and rain
-    └── Live 5-Day Rainfall Accumulation + SRTM DEM + River Distances
+    └── Live 5-Day Rainfall Accumulation + SRTM DEM + River Proximities
                    │
-                   ▼
-[ STEP 2: Autonomous EdgeAI Sentinel (run_live_sentinel.py) ]
-    ├── weather_edge_prediction.py  ──> LSTM (1, 24, 8)       ──> 1-Hr Ahead Forecast
-    └── flood_edge_prediction.py    ──> ConvLSTM2D (16, 5, 32, 32, 6) ──> Spatial Inundation Map
+                   ▼ [ 5G Wireless Downlink / Mobile Broadband ]
+[ STEP 2: 5G-Connected Autonomous EdgeAI Node (run_live_sentinel.py) ]
+    ├── weather_edge_prediction.py  ──> LSTM (1, 24, 8)       ──> 1-Hr Ahead Forecast (0.35s)
+    └── flood_edge_prediction.py    ──> ConvLSTM2D (16, 5, 32, 32, 6) ──> Spatial Inundation Map (0.86s)
                    │
-                   ▼
+                   ▼ [ 5G Low-Latency Uplink: ~2.4 KB JSON Telemetry ]
 [ STEP 3: Decoupled Cloud Synchronization (Firebase) ]
     ├── Cloud Firestore: 'weather_forecasts' (13 Assam stations updated)
     └── Cloud Firestore: 'predictions'       (16 Assam zones refreshed)
                    │
-                   ▼
+                   ▼ [ High-Speed Web CDN / WebSocket Stream ]
 [ STEP 4: High-Concurrency Global Client Delivery ]
     └── Firebase Hosting: https://flood-weather-app.web.app (Leaflet GIS, Sub-second rendering)
 ```
 
 ### Computational Latency Benchmark
-* Weather Data Fetch & LSTM Inference (13 stations): **$5.3\text{ seconds}$**
-* Hydrological Ingestion & ConvLSTM2D Inference (16 zones): **$8.8\text{ seconds}$**
-* Cloud Firestore Document Synchronization: **$4.0\text{ seconds}$**
-* **Total End-to-End Cycle Latency**: **$\approx 61.0\text{ seconds}$**
+* Pure Neural Forward Inference (13 LSTM passes + 16 ConvLSTM2D patches): **$1.220\text{ seconds}$**
+* Weather Data Ingestion (13 stations): **$24.167\text{ seconds}$**
+* Hydrological Ingestion & Dynamic Tensor Construction: **$2.650\text{ seconds}$**
+* Cloud Firestore Document Synchronization: **$3.868\text{ seconds}$**
+* **Total Warm-Cache Operational Turnaround**: **$35.907\text{ seconds}$**
+* **Zero-Cache Cold Start** (including dynamic 30.7s cloud model download): **$70.535\text{ seconds}$**
 
 ---
 

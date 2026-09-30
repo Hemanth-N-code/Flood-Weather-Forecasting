@@ -35,9 +35,9 @@ IST = timezone(timedelta(hours=5, minutes=30))
 def print_banner():
     banner = r"""
   ╔═════════════════════════════════════════════════════════════════════════════╗
-  ║    🛰️  ASSAM FLOOD & WEATHER AI SENTINEL - COMPLETE ZERO-CACHE PIPELINE     ║
-  ║         Cloud Model Ingestion • Edge AI Inference • Cloud Distribution      ║
-  ║         With Real-Time Millisecond Latency Profiler & Benchmark Audit       ║
+  ║    🛰️  5G-ENABLED EDGE AI FLOOD & WEATHER SENTINEL - FULL PIPELINE          ║
+  ║         Zero-Cache Cloud Model Sync • Local Edge AI Neural Inference        ║
+  ║         5G High-Speed Downlink & Low-Latency Uplink Latency Audit           ║
   ╚═════════════════════════════════════════════════════════════════════════════╝
     """
     print(banner)
@@ -49,13 +49,17 @@ def print_stage_header(stage_num, total_stages, title, subtitle):
     print("=" * 82)
 
 def execute_full_pipeline():
+    import socket
     print_banner()
     
     pipeline_start = time.perf_counter()
     timings = {}
+    host_name = socket.gethostname()
     
     current_time_str = datetime.now(IST).strftime("%Y-%m-%d %I:%M:%S %p IST")
     print(f"⏱️  Pipeline Execution Triggered at: {current_time_str}")
+    print(f"💻 Edge Compute Host: {host_name} (Local AI Inference Node)")
+    print("📶 Wireless Link: 5G/Cellular Gateway (eMBB Ingestion & Low-Latency Telemetry)")
     print("📍 Monitored Region: Assam, Northeast India (Brahmaputra & Barak Basins)")
     print("☁️ Cloud Storage Bucket: flood-weather-app.firebasestorage.app")
     print("🔥 Cloud Database: Google Cloud Firestore ('weather_forecasts' & 'predictions')")

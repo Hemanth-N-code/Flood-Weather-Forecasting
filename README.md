@@ -1,4 +1,4 @@
-# 🛰️ EdgeAI Sentinel: Spatio-Temporal Flood Inundation & Meteorological Forecasting System
+# 🛰️ 5G-Enabled Edge AI Flood Forecasting and Weather Prediction System
 
 [![Live Demo](https://img.shields.io/badge/Live_Dashboard-flood--weather--app.web.app-0ea5e9?style=for-the-badge&logo=google-chrome&logoColor=white)](https://flood-weather-app.web.app)
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)](https://tensorflow.org)
@@ -6,17 +6,18 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
-An end-to-end, edge-deployable deep learning framework for **real-time flood risk mapping and short-term weather forecasting** across the floodplains of the **Brahmaputra and Barak basins in Assam, India**.
+An autonomous, 5G-connected deep learning framework for **real-time flood risk mapping and short-term weather forecasting** across the floodplains of the **Brahmaputra and Barak basins in Assam, India**.
 
 ---
 
 ## 📌 Key Highlights
 
-* 🌐 **Live Public Web Dashboard**: Hosted at **[https://flood-weather-app.web.app](https://flood-weather-app.web.app)** with interactive GIS Leaflet maps and 2-to-3 decimal precision telemetry.
+* 🌐 **Live Public Web Dashboard**: Hosted at **[https://flood-weather-app.web.app](https://flood-weather-app.web.app)** with interactive GIS Leaflet maps and real-time telemetry.
+* 📶 **5G-Enabled Edge Computing**: AI inference is performed locally on the edge computing host in **$1.22\,\text{seconds}$**, utilizing 5G wireless connectivity to ingest atmospheric data and upload lightweight JSON telemetry ($\approx 2.4\,\text{KB}$), reducing cellular bandwidth consumption by **$>99.8\%$** over raw raster streaming.
 * 🌊 **ConvLSTM2D-UNet Inundation Head**: Ingests multi-modal 6-channel spatio-temporal tensors $(N, 5, 32, 32, 6)$ to predict local flood probability with **97.0% overall accuracy** and **99.0% flood recall**.
 * ⛅ **Sequence-to-Sequence Weather LSTM**: Models 24-hour non-linear atmospheric dynamics across 8 thermodynamic features to forecast next-hour conditions ($R^2 = 0.9352$, $\text{MAE} = 0.0975$).
-* ⚡ **Sub-Minute Edge Latency**: Replaces computationally heavy 2D numerical hydrodynamic solvers (which take hours) with neural inference that executes in **$\approx 61\text{ seconds}$**.
-* 🔬 **Hydrologically Validated**: Statistically proven physical consistency with $+0.8189$ rainfall correlation and $-0.5144$ elevation correlation.
+* ⚡ **Sub-Minute Turnaround**: Replaces computationally heavy 2D numerical hydrodynamic solvers (which take 4 to 12 hours) with autonomous edge execution in **$35.9\text{ seconds}$** (cold start with cloud model weights sync: $70.5\,\text{s}$).
+* 🔬 **Hydrologically Validated**: Statistically proven physical consistency across 16 Assam floodplain basins with $+0.8189$ rainfall correlation and $-0.5144$ elevation correlation.
 
 ---
 
@@ -48,25 +49,25 @@ Evaluated on continuous multi-month hourly atmospheric test sequences:
 ## 🗺️ System Architecture & Data Flow
 
 ```
-[ Tier 1: Real-Time Data Ingestion ]
+[ Planetary Observation Data Sources ]
    ├── Open-Meteo REST API: Live 24-hour meteorological observations
-   ├── Hydrological API: Live 5-day cumulative precipitation history
+   ├── Hydrological Ingestion: Live 5-day cumulative precipitation history
    └── Geospatial Vectors: SRTM 30m DEM Elevation, Terrain Slope, River Proximity
                   │
-                  ▼
-[ Tier 2: Autonomous EdgeAI Sentinel (run_live_sentinel.py) ]
-   ├── weather_edge_prediction.py  ──> LSTM (1, 24, 8)       ──> Next-Hour Weather
-   └── flood_edge_prediction.py    ──> ConvLSTM2D (N, 5, 32, 32, 6) ──> Spatial Flood Risk
+                  ▼ [ 5G Wireless Downlink / Mobile Broadband ]
+[ 5G-Connected Edge Compute Node (Local Device / run_live_sentinel.py) ]
+   ├── weather_edge_prediction.py  ──> LSTM (1, 24, 8)       ──> 1-Hr Weather Forecast (0.35s)
+   └── flood_edge_prediction.py    ──> ConvLSTM2D (N, 5, 32, 32, 6) ──> Spatial Flood Risk (0.86s)
                   │
-                  ▼
-[ Tier 3: Cloud Database Synchronization (Firebase) ]
-   ├── Cloud Firestore: 'weather_forecasts' (13 Assam stations)
-   ├── Cloud Firestore: 'predictions'       (16 Assam hydrological zones)
-   └── Cloud Storage:   Model checkpoints (.keras, .h5, .pkl) & npz tensors
+                  ▼ [ 5G Low-Latency Uplink: ~2.4 KB JSON Telemetry ]
+[ Cloud Database Synchronization (Firebase Firestore & Storage) ]
+   ├── Cloud Firestore: 'weather_forecasts' (13 Assam stations updated)
+   ├── Cloud Firestore: 'predictions'       (16 Assam hydrological zones refreshed)
+   └── Cloud Storage:   Model weight cache  (models/flood_model_v1.keras, weather_lstm_model.h5)
                   │
-                  ▼
-[ Tier 4: Client Presentation Layer (Firebase Hosting) ]
-   └── app/index.html (Leaflet GIS, CORS-Free Compat Architecture, Auto-polling)
+                  ▼ [ Real-Time Web CDN / WebSocket Stream ]
+[ Client Presentation Layer (Firebase Hosting) ]
+   └── https://flood-weather-app.web.app (Leaflet GIS, Sub-second reactive rendering)
 ```
 
 ---

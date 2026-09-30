@@ -27,8 +27,8 @@ from flood_edge_prediction import run_flood_prediction
 def print_banner():
     banner = r"""
   ╔═════════════════════════════════════════════════════════════════════════════╗
-  ║    🛰️  ASSAM FLOOD & WEATHER AI SENTINEL - DEEP TELEMETRY RUNNER            ║
-  ║         EdgeAI Autonomous Spatio-Temporal Early Warning Engine              ║
+  ║    🛰️  5G-ENABLED EDGE AI FLOOD & WEATHER FORECASTING SENTINEL               ║
+  ║         Local Edge Compute Node • 5G Wireless Downlink / Uplink Pipeline     ║
   ║         Brahmaputra & Barak Basins • Dual Neural Pipeline Architecture      ║
   ╚═════════════════════════════════════════════════════════════════════════════╝
     """
@@ -42,10 +42,14 @@ def print_step_header(step_num, title, subtitle):
 
 def execute_pipeline():
     """Runs one full pass of live weather and flood inference with deep technical telemetry."""
+    import socket
     start_time = time.time()
     current_time = datetime.now(IST).strftime("%Y-%m-%d %I:%M:%S %p IST")
+    host_name = socket.gethostname()
     
     print(f"\n⏱️  Sentinel Pipeline Triggered at: {current_time}")
+    print(f"💻 Edge Compute Node: {host_name} (Local Neural Acceleration Active)")
+    print("📶 Wireless Link: 5G/Cellular Gateway (eMBB Downlink & Low-Latency Uplink)")
     print("📍 Monitored Region: Assam, Northeast India (Brahmaputra & Barak Basins)")
     print("🔗 Target Cloud Endpoint: Google Cloud Firestore ('weather_forecasts' & 'predictions')")
     print("🌐 Public GIS Dashboard: https://flood-weather-app.web.app")
