@@ -1,11 +1,11 @@
 """
-Sentinel EdgeAI: Real-Time Dual-Mode Prediction Engine
-=======================================================
+EdgeAiSentinel: Real-Time 5G-Enabled Edge Computing Prediction Engine
+=====================================================================
 Autonomous Neural Monitoring & Early Warning System for Assam.
 Runs genuine real-time inference using trained neural models:
 1. Stacked LSTM Sequence Model for next-hour Weather Forecasting.
 2. ConvLSTM2D-UNet Hybrid Model for spatial Flood Risk Inundation.
-Synchronizes live results to Google Cloud Firestore and Web GIS Dashboard.
+Synchronizes live results to Google Cloud Firestore and Web GIS Dashboard over 5G channels.
 """
 
 import sys
@@ -27,7 +27,7 @@ from flood_edge_prediction import run_flood_prediction
 def print_banner():
     banner = r"""
   ╔═════════════════════════════════════════════════════════════════════════════╗
-  ║    🛰️  5G-ENABLED EDGE AI FLOOD & WEATHER FORECASTING SENTINEL               ║
+  ║    🛰️  EdgeAiSentinel: 5G-ENABLED EDGE COMPUTING SYSTEM                      ║
   ║         Local Edge Compute Node • 5G Wireless Downlink / Uplink Pipeline     ║
   ║         Brahmaputra & Barak Basins • Dual Neural Pipeline Architecture      ║
   ╚═════════════════════════════════════════════════════════════════════════════╝

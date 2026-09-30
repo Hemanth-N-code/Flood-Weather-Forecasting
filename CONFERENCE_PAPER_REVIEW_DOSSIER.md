@@ -1,7 +1,7 @@
-# 🛰️ 5G-Enabled Edge AI Flood Forecasting & Weather Prediction System
+# 🛰️ EdgeAiSentinel: A 5G-Enabled Edge Computing System for Flood Forecasting & Weather Prediction
 ## Comprehensive Technical Project Dossier for Advisor Review & IEEE Conference Submission
 
-**Project Title:** *5G-Enabled Edge AI Flood Forecasting and Weather Prediction System: A Spatio-Temporal Deep Learning and Decoupled Cloud Architecture for the Brahmaputra Basin*  
+**Project Title:** *EdgeAiSentinel — A 5G-Enabled Edge Computing System for Flood Forecasting and Weather Prediction: A Spatio-Temporal Deep Learning and Decoupled Cloud Architecture for the Brahmaputra Basin*  
 **Repository:** [https://github.com/Hemanth-N-code/Flood-Weather-Forecasting](https://github.com/Hemanth-N-code/Flood-Weather-Forecasting)  
 **Live Deployed Application:** [https://flood-weather-app.web.app](https://flood-weather-app.web.app)  
 **Target Publication Venues:** IEEE IGARSS, IEEE GHTC, IEEE R10-HTC, IEEE TENCON  
@@ -12,7 +12,7 @@
 
 Conventional flood risk models rely on 2D numerical hydrodynamic differential equation solvers (e.g., HEC-RAS, MIKE 21) that require hours of compute time per simulation cycle, rendering them ineffective for short-window emergency evacuations. 
 
-**5G-Enabled Edge AI Sentinel** introduces an autonomous dual-neural operational framework tailored to the Brahmaputra and Barak basins of Assam, India. The system couples:
+**EdgeAiSentinel** introduces an autonomous dual-neural operational framework tailored to the Brahmaputra and Barak basins of Assam, India. The system couples:
 1. A **ConvLSTM2D-UNet Hybrid Spatio-Temporal Model** that digests a 6-band multi-modal tensor $(N, 5, 32, 32, 6)$ fusing SAR water masks, optical NDWI, GPM precipitation, SRTM DEM elevation, slope, and river proximity, achieving **97.0% overall accuracy** and **99.0% flood recall**.
 2. A **Sequence-to-Sequence Recurrent Neural Network (LSTM)** trained on hourly ECMWF ERA5 reanalysis data to forecast 1-hour ahead atmospheric thermodynamic parameters ($R^2 = 0.9352$, $\text{MAE} = 0.0975$).
 3. A **5G-Connected Autonomous Edge Inference Node** running periodic cycles in **$35.9\text{ seconds}$** ($1.22\,\text{s}$ neural computation), utilizing 5G wireless connectivity to upload lightweight JSON telemetry ($\approx 2.4\,\text{KB}$) to Google Cloud Firestore, reducing data transmission overhead by **$>99.8\%$** over raw raster streaming, and serving a live GIS radar dashboard over global CDN.

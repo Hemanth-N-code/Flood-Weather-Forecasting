@@ -1,4 +1,4 @@
-# 🛰️ 5G-Enabled Edge AI Flood Forecasting and Weather Prediction System
+# 🛰️ EdgeAiSentinel — A 5G-Enabled Edge Computing System for Flood Forecasting and Weather Prediction
 
 [![Live Demo](https://img.shields.io/badge/Live_Dashboard-flood--weather--app.web.app-0ea5e9?style=for-the-badge&logo=google-chrome&logoColor=white)](https://flood-weather-app.web.app)
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)](https://tensorflow.org)
@@ -6,7 +6,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
-An autonomous, 5G-connected deep learning framework for **real-time flood risk mapping and short-term weather forecasting** across the floodplains of the **Brahmaputra and Barak basins in Assam, India**.
+**EdgeAiSentinel** is an autonomous, 5G-enabled edge computing and deep learning system designed for **real-time flood risk mapping and short-term weather forecasting** across the floodplains of the **Brahmaputra and Barak basins in Assam, India**.
 
 ---
 

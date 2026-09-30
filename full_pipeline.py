@@ -1,6 +1,6 @@
 """
-EdgeAI Sentinel: Complete Zero-Cache Cold-Start Operational Pipeline
-====================================================================
+EdgeAiSentinel: Complete 5G-Enabled Edge Computing Operational Pipeline
+========================================================================
 Performs a true end-to-end real-world operational execution:
 1. Purges all local cached models and tensors from disk to ensure zero-cache baseline.
 2. Downloads trained neural models and scalers dynamically from Google Cloud Storage.
@@ -35,7 +35,7 @@ IST = timezone(timedelta(hours=5, minutes=30))
 def print_banner():
     banner = r"""
   ╔═════════════════════════════════════════════════════════════════════════════╗
-  ║    🛰️  5G-ENABLED EDGE AI FLOOD & WEATHER SENTINEL - FULL PIPELINE          ║
+  ║    🛰️  EdgeAiSentinel: 5G-ENABLED EDGE COMPUTING SYSTEM - FULL PIPELINE     ║
   ║         Zero-Cache Cloud Model Sync • Local Edge AI Neural Inference        ║
   ║         5G High-Speed Downlink & Low-Latency Uplink Latency Audit           ║
   ╚═════════════════════════════════════════════════════════════════════════════╝
