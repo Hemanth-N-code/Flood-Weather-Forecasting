@@ -101,7 +101,7 @@ Rolling 24-hour sequences of 8 standardized continuous variables extracted from 
 
 #### Visual Result Plots for Paper Figures:
 * 📉 **Weather LSTM Training Loss Curve**: `doc/training_loss.png`
-* 📊 **Weather Prediction Score & R² Plot**: `doc/weather Score.png`
+* 📊 **Weather Prediction Score & R² Plot**: `doc/weather_score.png`
 
 ---
 
@@ -195,7 +195,7 @@ All high-resolution figures (300 DPI) are located in the [`doc/`](file:///c:/Use
 | **Fig 5** | [`doc/confusion_matrix.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/confusion_matrix.png) | 1800 × 1200 | **Normalized Confusion Matrix**: Highlighting 99.00% flood recall on 929 test rasters to eliminate safety-critical false negatives. |
 | **Fig 6** | [`doc/prediction_distribution.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/prediction_distribution.png) | 1800 × 1200 | **Pixel Prediction Distribution**: Histogram showing sharp bimodal confidence separation between dry land and flooded pixels. |
 | **Fig 7** | [`doc/training_loss.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/training_loss.png) | 1800 × 1200 | **Weather LSTM Training Loss Curve**: Mean squared error (MSE) convergence over ERA5 atmospheric reanalysis sequences. |
-| **Fig 8** | [`doc/weather Score.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/weather%20Score.png) | 1800 × 1200 | **Atmospheric Forecasting Performance**: Multi-variable evaluation across temperature, pressure, precipitation, and wind speed ($R^2 > 0.93$). |
+| **Fig 8** | [`doc/weather_score.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/weather_score.png) | 1800 × 1200 | **Atmospheric Forecasting Performance**: Multi-variable evaluation across temperature, pressure, precipitation, and wind speed ($R^2 > 0.93$). |
 | **Fig 9** | [`doc/Risk_Zone.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/Risk_Zone.png) | 1920 × 1080 | **Live Leaflet GIS Risk Map**: Real-time spatial risk choropleth over 16 monitored Assam floodplains. |
 | **Fig 10** | [`doc/Silchar_Risk_info.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/Silchar_Risk_info.png) | 1920 × 1080 | **Basin-Level Risk Telemetry**: Real-time risk scoring, sensor breakdown, and automated early warning advisory for Silchar (Barak Valley). |
 | **Fig 11** | [`doc/Weather_info.png`](file:///c:/Users/mehem/Downloads/Flood_Weather_Project/doc/Weather_info.png) | 1920 × 1080 | **7-Day Multi-Variable Meteorological Dashboard**: Forecasted temperature, precipitation probability, humidity, and barometric pressure. |
